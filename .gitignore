@@ -1,15 +1,240 @@
-# Virtual environment
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   By default, recommend using Pipfile.lock for reproducibility, but you might not want to check in the Pipfile
+#   if it contains sensitive information or system-specific requirements
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# pdm-backend
+.pdm-build/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Virtual environments
 venv/
+env/
+ENV/
+virtualenv/
 .venv/
+venv*/
+env*/
+.venv*/
+virtualenv*/
+
+# Virtual environment (Python 3.3+)
+bin/
+include/
+lib/
+lib64/
+pyvenv.cfg
+pip-selfcheck.json
+.Python
+
+# Virtual environment (conda)
+conda-env/
+*.conda
+
+# Virtual environment (pipenv)
+.pipenv/
+
+# Virtual environment (poetry)
+.python-version
+
+# Audio files (you might want to keep some, adjust as needed)
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.aac
+*.ogg
+
+# Model files (usually large - adjust based on your needs)
+*.pth
+*.pt
+*.h5
+*.keras
+*.joblib
+*.pkl
+*.pickle
+models/
+checkpoints/
+weights/
+
+# Dataset files (adjust based on your needs)
+*.csv
+*.json
+*.xml
+datasets/
+data/raw/
+data/processed/
 
 # Environment variables
 .env
+.env.local
+.env.production
+.env.dev
 
-results/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Python cache
-__pycache__/
-*.pyc
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Logs
 *.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Audio processing temporary files
+*.mp4
+*.avi
+*.mov
+
+# Large language models (if you're using any)
+*.bin
+*.safetensors
+
+# Hugging Face cache
+.cache/
+huggingface/
+
+# Node.js (if you have any web components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Local History for Visual Studio Code
+.history/
+
+# MLflow
+mlruns/
+
+# PyTorch
+*.torch
+
+# TensorBoard
+logs/
+tensorboard/
+
+# Jupyter
+.jupyter/
+
+# Your specific paths
+ffmpeg/
+results/audio_output/
+results/cleaned_data/

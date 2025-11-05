@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Multilingual Video Translator 🎧</title>
+
+  <style>
+    /* ===== Global Theme ===== */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #0e0e10, #151515 60%, #111);
+      color: #eee;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 28px;
+      background: rgba(20, 20, 20, 0.9);
+      border-bottom: 1px solid #222;
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h2 {
+      margin: 0;
+      color: #00c3ff;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 6px rgba(0, 195, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mic-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .mic-wrap select,
+    .mic-wrap button {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mic-wrap select {
+      background: #1b1b1b;
+      color: #eee;
+      border: 1px solid #333;
+    }
+
+    .mic-wrap button {
+      background: #ff4757;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 0 6px rgba(255, 71, 87, 0.3);
+    }
+
+    .mic-wrap button:hover {
+      background: #ff5c6c;
+      box-shadow: 0 0 10px rgba(255, 71, 87, 0.6);
+      transform: translateY(-1px);
+    }
+
+    /* ===== Main Grid ===== */
+    main {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 26px;
+      justify-items: center;
+    }
+
+    .card {
+      background: #1a1a1c;
+      border-radius: 12px;
+      padding: 12px;
+      width: 320px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 195, 255, 0.3);
+    }
+
+    video {
+      width: 100%;
+      border-radius: 10px;
+      background: #000;
+    }
+
+    .controls {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    select,
+    button.translate {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    select {
+      background: #101010;
+      color: #eee;
+      border: 1px solid #333;
+    }
+
+    button.translate {
+      background: #007bff;
+      color: white;
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    }
+
+    button.translate:hover {
+      background: #1591ff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+    }
+
+    /* ===== Loader Overlay ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .loader {
+      background: #111;
+      padding: 24px 36px;
+      border-radius: 14px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(0, 195, 255, 0.2);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      margin: 12px auto;
+      border: 6px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #00c3ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+      border-top: 1px solid #222;
+      background: #151515;
+    }
+
+    /* ===== Notification ===== */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: #00b894;
+    }
+
+    .notification.error {
+      background: #ff4757;
+    }
+
+    .notification.info {
+      background: #007bff;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2>🎬 AI Multilingual Video Translator</h2>
+    <div class="mic-wrap">
+      <label style="font-size:13px;color:#aaa;">Mic →</label>
+      <select id="micLangSelect">
+        <option value="hi">Hindi</option>
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="it">Italian</option>
+        <option value="ru">Russian</option>
+        <option value="ar">Arabic</option>
+        <option value="zh">Chinese</option>
+        <option value="nl">Dutch</option>
+        <option value="pt">Portuguese</option>
+        <option value="ja">Japanese</option>
+        <option value="ko">Korean</option>
+      </select>
+      <button id="micBtn">🎤 Mic Voice → Voice</button>
+    </div>
+  </header>
+
+  <main id="videoGrid">
+    <div style="color:#888; text-align:center; padding:40px;" id="loadingVideos">
+      Loading videos...
+    </div>
+  </main>
+
+  <div class="overlay" id="overlay">
+    <div class="loader">
+      <div class="spinner"></div>
+      <p id="loaderText">Processing...</p>
+      <p style="font-size:13px;color:#999;margin-top:6px;" id="loaderSubtext">Please wait, generating translation...</p>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <footer>
+    <p>Powered by Azure Speech · Flask-SocketIO · GPT Translation Pipeline</p>
+  </footer>
+
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    // Fixed API URL - connect to Flask server
+    const API = "http://127.0.0.1:5002";
+    const socket = io(API);
+    const overlay = document.getElementById("overlay");
+    const loaderText = document.getElementById("loaderText");
+    const loaderSubtext = document.getElementById("loaderSubtext");
+    const videoGrid = document.getElementById("videoGrid");
+    const loadingVideos = document.getElementById("loadingVideos");
+    const notification = document.getElementById("notification");
+
+    // Notification system
+    function showNotification(message, type = 'info', duration = 3000) {
+      notification.textContent = message;
+      notification.className = `notification ${type} show`;
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, duration);
+    }
+
+    function showLoader(msg = "Processing...", subtext = "Please wait, generating translation...") {
+      loaderText.textContent = msg;
+      loaderSubtext.textContent = subtext;
+      overlay.classList.add("show");
+    }
+
+    function hideLoader() {
+      overlay.classList.remove("show");
+    }
+
+    // Connection handling
+    socket.on('connect', () => {
+      console.log('✅ Connected to server');
+      showNotification('Connected to translation server', 'success', 2000);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('❌ Disconnected from server');
+      showNotification('Disconnected from server', 'error', 3000);
+    });
+
+    socket.on('connect_error', (error) => {
+      console.log('❌ Connection error:', error);
+      showNotification('Failed to connect to server. Make sure Flask server is running on port 5002.', 'error', 5000);
+    });
+
+    // =============================
+    // Load videos dynamically
+    // =============================
+    async function loadVideos() {
+      try {
+        const res = await fetch(API + "/videos");
+        if (!res.ok) throw new Error(`Server returned ${res.status}: ${res.statusText}`);
+        
+        const videos = await res.json();
+        
+        if (loadingVideos) loadingVideos.remove();
+        videoGrid.innerHTML = "";
+
+        if (videos.length === 0) {
+          videoGrid.innerHTML = `
+            <div style="color:#888; text-align:center; padding:40px; grid-column: 1 / -1;">
+              No videos found. Please add video files to static/uploads/videos/ directory.
+            </div>`;
+          return;
+        }
+
+        videos.forEach(v => {
+          const options = v.available_langs.map(l => 
+            `<option value="${l}">${l.toUpperCase()} - ${getLanguageName(l)}</option>`
+          ).join("");
+          
+          videoGrid.innerHTML += `
+            <div class="card">
+              <video id="vid_${v.id}" src="${API}${v.src}" controls crossorigin="anonymous" 
+                     poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7di50aXRsZX08L3RleHQ+PC9zdmc+">
+              </video>
+              <div style="padding:8px 4px; font-size:13px; color:#aaa;">${v.title || 'Video'}</div>
+              <div class="controls">
+                <select id="lang_${v.id}">
+                  <option value="">Select target language</option>${options}
+                </select>
+                <button class="translate" onclick="translateVideo('${v.id}')">🌐 Translate</button>
+              </div>
+            </div>`;
+        });
+        
+        console.log(`✅ Loaded ${videos.length} videos`);
+        showNotification(`Loaded ${videos.length} videos`, 'success', 2000);
+        
+      } catch (err) {
+        if (loadingVideos) loadingVideos.remove();
+        videoGrid.innerHTML = `
+          <div style="color:#ff6b6b; text-align:center; padding:40px; grid-column: 1 / -1;">
+            Error loading videos: ${err.message}<br><br>
+            Make sure:<br>
+            • Flask server is running on http://127.0.0.1:5002<br>
+            • Video files are in static/uploads/videos/ directory<br>
+            • Server has the /videos endpoint configured
+          </div>`;
+        console.error('Error loading videos:', err);
+      }
+    }
+
+    function getLanguageName(code) {
+      const languages = {
+        'en': 'English', 'hi': 'Hindi', 'es': 'Spanish', 'fr': 'French',
+        'de': 'German', 'it': 'Italian', 'ru': 'Russian', 'ar': 'Arabic',
+        'zh': 'Chinese', 'ja': 'Japanese', 'ko': 'Korean', 'pt': 'Portuguese',
+        'nl': 'Dutch'
+      };
+      return languages[code] || code;
+    }
+
+    // =============================
+    // Video translation
+    // =============================
+    async function translateVideo(videoId) {
+      const select = document.getElementById("lang_" + videoId);
+      const targetLang = select.value;
+      if (!targetLang) {
+        showNotification("Please select a target language", "error", 3000);
+        return;
+      }
+
+      showLoader("Translating Video", `Processing translation to ${getLanguageName(targetLang)}...`);
+      
+      try {
+        const res = await fetch(API + "/translate-video", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ video_id: videoId, target_lang: targetLang })
+        });
+        
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        
+        const data = await res.json();
+        
+        if (!data.ok) {
+          hideLoader();
+          showNotification("Translation failed: " + (data.msg || "Unknown error"), "error", 5000);
+          return;
+        }
+        
+        // Play the translated audio
+        const audio = new Audio(API + data.audio_url);
+        audio.play();
+        
+        // Update loader to show success
+        loaderText.textContent = "Translation Complete!";
+        loaderSubtext.textContent = `Playing ${getLanguageName(targetLang)} audio...`;
+        
+        showNotification(`Translation to ${getLanguageName(targetLang)} completed`, "success", 3000);
+        
+        // Hide loader after audio finishes or 5 seconds
+        audio.onended = hideLoader;
+        setTimeout(hideLoader, 5000);
+        
+      } catch (err) {
+        hideLoader();
+        showNotification("Translation request failed: " + err.message, "error", 5000);
+        console.error('Translation error:', err);
+      }
+    }
+
+    // =============================
+    // Mic voice → voice translation
+    // =============================
+    const micBtn = document.getElementById("micBtn");
+    let mediaRecorder, chunks = [];
+
+    micBtn.onclick = async () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        micBtn.textContent = "🎤 Mic Voice → Voice";
+        micBtn.style.background = "#ff4757";
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        chunks = [];
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          const b64 = await blobToBase64(blob);
+          const targetLang = document.getElementById("micLangSelect").value;
+          showLoader("Voice Translation", `Translating to ${getLanguageName(targetLang)}...`);
+          socket.emit("mic-translate", { audio_b64: b64, src_lang: "auto", target_lang: targetLang });
+        };
+
+        mediaRecorder.start();
+        micBtn.textContent = "⏺️ Recording... Click to stop";
+        micBtn.style.background = "#ff6b6b";
+        
+        // Auto-stop after 6 seconds
+        setTimeout(() => {
+          if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            micBtn.textContent = "🎤 Mic Voice → Voice";
+            micBtn.style.background = "#ff4757";
+          }
+        }, 6000);
+        
+      } catch (err) {
+        showNotification("Microphone access error: " + err.message, "error", 5000);
+        console.error('Microphone error:', err);
+      }
+    };
+
+    socket.on("mic-translate-result", msg => {
+      if (!msg.ok) {
+        hideLoader();
+        showNotification("Mic translation failed: " + msg.msg, "error", 5000);
+        return;
+      }
+      
+      // Play the translated audio
+      const audio = new Audio(API + msg.audio_url);
+      audio.play();
+      
+      loaderText.textContent = "Voice Translation Complete!";
+      loaderSubtext.textContent = `Playing ${getLanguageName(msg.target_lang)} audio...`;
+      
+      showNotification(`Voice translated to ${getLanguageName(msg.target_lang)}`, "success", 3000);
+      
+      audio.onended = hideLoader;
+      setTimeout(hideLoader, 5000);
+    });
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      loadVideos();
+    });
+  </script>
+</body>
+</html>
