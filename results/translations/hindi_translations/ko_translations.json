@@ -1,0 +1,123 @@
+{
+  "audio_file_line_1_1761379830": {
+    "original_text": "सब कुछ बेहतर होने वाला है, बस इंतजार करो।",
+    "translated_text": "[Error:'hi-IN']",
+    "timestamp": "2025-10-25T13:40:30.747365",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "audio_file",
+    "source_type": "audio_file",
+    "translation_id": "audio_file_line_1_1761379830"
+  },
+  "audio_file_line_1_1761454984": {
+    "original_text": "चलो आज रात नाचे और पार्टी मनाएं।",
+    "translated_text": "오늘 밤 춤과 파티를 축하하자.",
+    "timestamp": "2025-10-26T10:33:04.526836",
+    "source_language": "hi",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "audio_file",
+    "source_type": "audio_file",
+    "translation_id": "audio_file_line_1_1761454984"
+  },
+  "microphone_line_1_1761454985": {
+    "original_text": "चलो आज रात नाचे और पार्टी मनाएं।",
+    "translated_text": "오늘 밤 춤과 파티를 축하하자.",
+    "timestamp": "2025-10-26T10:33:05.444050",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "microphone",
+    "source_type": "microphone",
+    "translation_id": "microphone_line_1_1761454985"
+  },
+  "auto_line_1_1761757646": {
+    "original_text": "तैयार हो जाओ तुम एक रत्न बनने जा रहे हो।",
+    "translated_text": "준비하십시오, 당신은 잔디가 될 것입니다.",
+    "timestamp": "2025-10-29T22:37:26.291229",
+    "source_language": "hi",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761757646"
+  },
+  "auto_line_1_1761757649": {
+    "original_text": "तैयार हो जाओ तुम एक रत्न बनने जा रहे हो।",
+    "translated_text": "준비하십시오, 당신은 잔디가 될 것입니다.",
+    "timestamp": "2025-10-29T22:37:29.864851",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761757649"
+  },
+  "auto_line_1_1761808652": {
+    "original_text": "सब कुछ ठीक हो जाएगा फिकरमत नहीं करो।",
+    "translated_text": "[Error translating to ko: 'hi-IN']",
+    "timestamp": "2025-10-30T12:47:32.465356",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761808652"
+  },
+  "auto_line_1_1762179665": {
+    "original_text": "सब कुछ ठीक हो जाएगा।",
+    "translated_text": "모든 것이 괜찮을 것이다.",
+    "timestamp": "2025-11-03T19:51:05.307901",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762179665"
+  },
+  "auto_line_1_1762356063": {
+    "original_text": "जीवन हर कदम पर आपकी क्षमता और चुनौतियों का परीक्षण करता है।",
+    "translated_text": "인생은 각 단계에서 당신의 능력과 도전을 테스트합니다.",
+    "timestamp": "2025-11-05T20:51:03.222658",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762356063"
+  },
+  "auto_line_1_1762356076": {
+    "original_text": "जीवन हर कदम पर आपकी क्षमता और चुनौतियों का परीक्षण करता है।",
+    "translated_text": "인생은 각 단계에서 당신의 능력과 도전을 테스트합니다.",
+    "timestamp": "2025-11-05T20:51:16.334233",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762356076"
+  },
+  "auto_line_1_1762358665": {
+    "original_text": "जल्दबाजी न करें, बस शांत रहें और अध्ययन करें।",
+    "translated_text": "서두르지 마십시오, 그냥 조용하고 공부하십시오.",
+    "timestamp": "2025-11-05T21:34:25.525033",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762358665"
+  },
+  "auto_line_1_1762358676": {
+    "original_text": "जल्दबाजी न करें, बस शांत रहें और अध्ययन करें।",
+    "translated_text": "서두르지 마십시오, 그냥 조용하고 공부하십시오.",
+    "timestamp": "2025-11-05T21:34:36.715782",
+    "source_language": "hi-IN",
+    "target_language": "ko",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762358676"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "audio_file_line_1_1761379830": {
+    "original_text": "सब कुछ बेहतर होने वाला है, बस इंतजार करो।",
+    "translated_text": "[Error:'hi-IN']",
+    "timestamp": "2025-10-25T13:40:30.492986",
+    "source_language": "hi-IN",
+    "target_language": "hi",
+    "line_number": 1,
+    "source": "audio_file",
+    "source_type": "audio_file",
+    "translation_id": "audio_file_line_1_1761379830"
+  },
+  "auto_line_1_1761757647": {
+    "original_text": "तैयार हो जाओ तुम एक रत्न बनने जा रहे हो।",
+    "translated_text": "तैयार हो जाओ, तुम एक रत्न बन जाओगे।",
+    "timestamp": "2025-10-29T22:37:27.283780",
+    "source_language": "hi",
+    "target_language": "hi",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761757647"
+  },
+  "auto_line_1_1761757649": {
+    "original_text": "तैयार हो जाओ तुम एक रत्न बनने जा रहे हो।",
+    "translated_text": "तैयार हो जाओ, तुम एक रत्न बन जाओगे।",
+    "timestamp": "2025-10-29T22:37:29.466123",
+    "source_language": "hi-IN",
+    "target_language": "hi",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761757649"
+  },
+  "auto_line_1_1761808652": {
+    "original_text": "सब कुछ ठीक हो जाएगा फिकरमत नहीं करो।",
+    "translated_text": "[Error translating to hi: 'hi-IN']",
+    "timestamp": "2025-10-30T12:47:32.192754",
+    "source_language": "hi-IN",
+    "target_language": "hi",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761808652"
+  }
+}

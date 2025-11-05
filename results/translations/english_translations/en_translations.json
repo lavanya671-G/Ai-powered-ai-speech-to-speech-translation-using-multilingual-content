@@ -1,0 +1,35 @@
+{
+  "auto_line_1_1761758818": {
+    "original_text": "You have to be fast, otherwise you can't catch the thief.",
+    "translated_text": "You have to be fast, otherwise you can’t catch the thief.",
+    "timestamp": "2025-10-29T22:56:58.634553",
+    "source_language": "en",
+    "target_language": "en",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761758818"
+  },
+  "auto_line_1_1761758827": {
+    "original_text": "You have to be fast, otherwise you can't catch the thief.",
+    "translated_text": "You have to be fast, otherwise you can’t catch the thief.",
+    "timestamp": "2025-10-29T22:57:07.648827",
+    "source_language": "en-US",
+    "target_language": "en",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761758827"
+  },
+  "auto_line_1_1761760631": {
+    "original_text": "Everything is going to be great soon.",
+    "translated_text": "[Error translating to en: 'en-US']",
+    "timestamp": "2025-10-29T23:27:11.377369",
+    "source_language": "en-US",
+    "target_language": "en",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1761760631"
+  }
+}
