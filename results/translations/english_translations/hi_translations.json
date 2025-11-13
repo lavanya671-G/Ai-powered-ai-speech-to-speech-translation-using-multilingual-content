@@ -328,5 +328,16 @@
     "source": "auto",
     "source_type": "auto",
     "translation_id": "auto_line_1_1762358906"
+  },
+  "auto_line_1_1762963043": {
+    "original_text": "Good morning. How are you?",
+    "translated_text": "सुबह ठीक है, आप कैसे हैं?",
+    "timestamp": "2025-11-12T21:27:23.602439",
+    "source_language": "en",
+    "target_language": "hi",
+    "line_number": 1,
+    "source": "auto",
+    "source_type": "auto",
+    "translation_id": "auto_line_1_1762963043"
   }
 }

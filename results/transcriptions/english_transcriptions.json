@@ -1377,5 +1377,22 @@
     "source": "audio_file",
     "source_type": "audio_file",
     "is_complete": true
+  },
+  "audio_file_line_1_1762962978": {
+    "timestamp": "2025-11-12T21:26:18.531290",
+    "line_number": 1,
+    "language": "en",
+    "text": "Good morning. How are you?",
+    "source": "audio_file",
+    "source_type": "audio_file"
+  },
+  "audio_file_complete_1762962979": {
+    "timestamp": "2025-11-12T21:26:19.006443",
+    "language": "en",
+    "text": "Good morning. How are you?",
+    "total_lines": 1,
+    "source": "audio_file",
+    "source_type": "audio_file",
+    "is_complete": true
   }
 }

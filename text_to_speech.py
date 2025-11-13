@@ -1,3 +1,5 @@
+#text_to_speech.py
+
 """
 OPTIMIZED MULTILINGUAL TEXT-TO-SPEECH MODULE
 - Fixed Azure TTS result checking
@@ -41,21 +43,22 @@ class MultilingualTextToSpeech:
     """
     
     # Optimized voice mapping for 12 core languages
-    AZURE_VOICE_MAPPING = {
-        'en': 'en-US-JennyNeural',
-        'hi': 'hi-IN-MadhurNeural', 
-        'es': 'es-ES-ElviraNeural',
-        'fr': 'fr-FR-DeniseNeural',
-        'de': 'de-DE-KatjaNeural',
-        'it': 'it-IT-ElsaNeural',
-        'ru': 'ru-RU-SvetlanaNeural',
-        'ar': 'ar-EG-SalmaNeural',
-        'zh': 'zh-CN-XiaoxiaoNeural',
-        'nl': 'nl-NL-ColetteNeural',
-        'pt': 'pt-BR-FranciscaNeural',
-        'ja': 'ja-JP-NanamiNeural',
-        'ko': 'ko-KR-SunHiNeural'
+    VOICE_MAP = {
+        "hi": "hi-IN-SwaraNeural",
+        "en": "en-US-AvaNeural",
+        "es": "es-ES-ElviraNeural",
+        "fr": "fr-FR-DeniseNeural",
+        "de": "de-DE-KatjaNeural",
+        "it": "it-IT-ElsaNeural",
+        "ru": "ru-RU-DariyaNeural",
+        "ar": "ar-SA-ZariyahNeural",
+        "zh": "zh-CN-XiaoxiaoNeural",
+        "nl": "nl-NL-ColetteNeural",
+        "pt": "pt-PT-RaquelNeural",
+        "ja": "ja-JP-NanamiNeural",
+        "ko": "ko-KR-SunHiNeural"
     }
+
     
     # Language name mapping for display
     LANGUAGE_NAMES = {

@@ -30,3 +30,13 @@ def translate_text_single(translator_pipeline, text, target_lang):
     except Exception as e:
         print(f"⚠️ Translation failed for {target_lang}: {e}")
         return None
+def cleanup_temp_files(days=2):
+    """Delete temp files older than given days"""
+    import os, time
+    temp_dir = "results/temp_audio"
+    now = time.time()
+    for f in os.listdir(temp_dir):
+        fp = os.path.join(temp_dir, f)
+        if os.stat(fp).st_mtime < now - days * 86400:
+            os.remove(fp)
+

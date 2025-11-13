@@ -1,516 +1,487 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AI Multilingual Video Translator 🎧</title>
-
-  <style>
-    /* ===== Global Theme ===== */
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(180deg, #0e0e10, #151515 60%, #111);
-      color: #eee;
-      overflow-x: hidden;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 28px;
-      background: rgba(20, 20, 20, 0.9);
-      border-bottom: 1px solid #222;
-      backdrop-filter: blur(6px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header h2 {
-      margin: 0;
-      color: #00c3ff;
-      letter-spacing: 0.5px;
-      text-shadow: 0 0 6px rgba(0, 195, 255, 0.6);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mic-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .mic-wrap select,
-    .mic-wrap button {
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .mic-wrap select {
-      background: #1b1b1b;
-      color: #eee;
-      border: 1px solid #333;
-    }
-
-    .mic-wrap button {
-      background: #ff4757;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 0 6px rgba(255, 71, 87, 0.3);
-    }
-
-    .mic-wrap button:hover {
-      background: #ff5c6c;
-      box-shadow: 0 0 10px rgba(255, 71, 87, 0.6);
-      transform: translateY(-1px);
-    }
-
-    /* ===== Main Grid ===== */
-    main {
-      padding: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 26px;
-      justify-items: center;
-    }
-
-    .card {
-      background: #1a1a1c;
-      border-radius: 12px;
-      padding: 12px;
-      width: 320px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-      transition: all 0.4s ease;
-      position: relative;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 30px rgba(0, 195, 255, 0.3);
-    }
-
-    video {
-      width: 100%;
-      border-radius: 10px;
-      background: #000;
-    }
-
-    .controls {
-      margin-top: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    select,
-    button.translate {
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-
-    select {
-      background: #101010;
-      color: #eee;
-      border: 1px solid #333;
-    }
-
-    button.translate {
-      background: #007bff;
-      color: white;
-      box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
-    }
-
-    button.translate:hover {
-      background: #1591ff;
-      transform: translateY(-1px);
-      box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
-    }
-
-    /* ===== Loader Overlay ===== */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      backdrop-filter: blur(4px);
-    }
-
-    .overlay.show {
-      display: flex;
-    }
-
-    .loader {
-      background: #111;
-      padding: 24px 36px;
-      border-radius: 14px;
-      text-align: center;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(0, 195, 255, 0.2);
-    }
-
-    .spinner {
-      width: 50px;
-      height: 50px;
-      margin: 12px auto;
-      border: 6px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #00c3ff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* ===== Footer ===== */
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-      font-size: 14px;
-      border-top: 1px solid #222;
-      background: #151515;
-    }
-
-    /* ===== Notification ===== */
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 12px 20px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      z-index: 1000;
-      opacity: 0;
-      transform: translateX(100%);
-      transition: all 0.3s ease;
-    }
-
-    .notification.show {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .notification.success {
-      background: #00b894;
-    }
-
-    .notification.error {
-      background: #ff4757;
-    }
-
-    .notification.info {
-      background: #007bff;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>🎬 AI Multilingual Video Translator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{
+    --bg:#0d0d0f; --card:#1a1a1d; --muted:#aaa; --accent:#00c3ff; --success:#00b894; --danger:#ff4757;
+  }
+  html,body{
+    height:100%;margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:#eee
+  }
+  header{
+    display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:#161618;border-bottom:1px solid #222;position:sticky;top:0;z-index:40
+  }
+  header h2{
+    margin:0;color:var(--accent);font-weight:700;text-shadow:0 0 12px rgba(0,195,255,0.6)
+  }
+  .mic-wrap{
+    display:flex;gap:10px;align-items:center
+  }
+  .mic-wrap select,.mic-wrap button{
+    padding:8px 10px;border-radius:8px;border:none;background:#1f1f21;color:#fff;font-weight:600;cursor:pointer
+  }
+  #micBtn{
+    background:var(--danger)
+  }
+  main{
+    padding:40px;max-width:1500px;margin:auto
+  }
+  h2.section-title{
+    font-size:26px;margin-bottom:20px;color:var(--accent);display:flex;align-items:center;gap:10px
+  }
+  #originalVideosWrapper,#translatedList{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:30px
+  }
+  .card{
+    background:var(--card);border-radius:14px;padding:12px;position:relative;box-shadow:0 6px 20px rgba(0,0,0,0.55);transition:transform .18s
+  }
+  .card:hover{
+    transform:translateY(-4px)
+  }
+  video{
+    width:100%;border-radius:12px;background:#000;outline:none;display:block
+  }
+  .controls{
+    margin-top:10px;display:flex;justify-content:space-between;gap:10px
+  }
+  .controls select,.controls button.translate{
+    padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:600
+  }
+  button.translate{
+    background:#007bff;color:#fff
+  }
+  /* bottom-right dots */
+  .dots{
+    position:absolute;bottom:12px;right:12px;font-size:26px;cursor:pointer;user-select:none;color:#ffffffc0;z-index:30
+  }
+  .dots:hover{
+    color:#fff
+  }
+  .menu-box{
+    display:none;position:absolute;bottom:50px;right:12px;width:220px;background:#222;border-radius:10px;box-shadow:0 8px 18px rgba(0,0,0,0.6);overflow:hidden;animation:fadeIn .14s ease;z-index:50
+  }
+  @keyframes fadeIn{from{
+    opacity:0;transform:translateY(8px)}to{opacity:1;transform:none
+    }}
+  .menu-item{
+    padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;color:#eee;font-size:15px
+  }
+  .menu-item:hover{
+    background:#333
+  }
+  .submenu{
+    display:none;position:absolute;bottom:50px;right:244px;width:160px;background:#222;border-radius:10px;box-shadow:0 8px 18px rgba(0,0,0,0.6);overflow:hidden;z-index:60
+  }
+  .submenu .menu-item{
+    padding:10px 12px
+  }
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:999
+  }
+  .overlay.show{
+    display:flex
+  }
+  .notification{
+    position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;opacity:0;transform:translateX(100%);transition:all .25s;z-index:1000;font-weight:600
+  }
+  .notification.show{
+    opacity:1;transform:translateX(0)
+  }
+  /* make selects show fully above overlays */
+  select{z-index:100}
+  /* responsive tweaks */
+  @media (max-width:480px){
+    header{padding:10px}
+    main{padding:18px}
+    .menu-box{right:8px;width:180px}
+    .submenu{right:196px}
+  }
+</style>
 </head>
-
 <body>
-  <header>
-    <h2>🎬 AI Multilingual Video Translator</h2>
-    <div class="mic-wrap">
-      <label style="font-size:13px;color:#aaa;">Mic →</label>
-      <select id="micLangSelect">
-        <option value="hi">Hindi</option>
-        <option value="en">English</option>
-        <option value="es">Spanish</option>
-        <option value="fr">French</option>
-        <option value="de">German</option>
-        <option value="it">Italian</option>
-        <option value="ru">Russian</option>
-        <option value="ar">Arabic</option>
-        <option value="zh">Chinese</option>
-        <option value="nl">Dutch</option>
-        <option value="pt">Portuguese</option>
-        <option value="ja">Japanese</option>
-        <option value="ko">Korean</option>
-      </select>
-      <button id="micBtn">🎤 Mic Voice → Voice</button>
-    </div>
-  </header>
 
-  <main id="videoGrid">
-    <div style="color:#888; text-align:center; padding:40px;" id="loadingVideos">
-      Loading videos...
-    </div>
-  </main>
+<header>
+  <h2>🎬 AI Multilingual Video Translator</h2>
 
-  <div class="overlay" id="overlay">
-    <div class="loader">
-      <div class="spinner"></div>
-      <p id="loaderText">Processing...</p>
-      <p style="font-size:13px;color:#999;margin-top:6px;" id="loaderSubtext">Please wait, generating translation...</p>
-    </div>
+  <div class="mic-wrap" role="region" aria-label="mic controls">
+    <label style="color:var(--muted);font-size:13px;margin-right:6px">Mic →</label>
+    <select id="micLangSelect" aria-label="choose mic translate language">
+      <option value="hi">Hindi</option>
+      <option value="en">English</option>
+      <option value="fr">French</option>
+      <option value="es">Spanish</option>
+      <option value="de">German</option>
+      <option value="it">Italian</option>
+      <option value="ru">Russian</option>
+      <option value="ar">Arabic</option>
+      <option value="zh">Chinese</option>
+      <option value="nl">Dutch</option>
+      <option value="pt">Portuguese</option>
+      <option value="ja">Japanese</option>
+      <option value="ko">Korean</option>
+    </select>
+    <button id="micBtn" aria-label="record mic for translation">🎤 Mic Translate</button>
   </div>
+</header>
 
-  <div id="notification" class="notification"></div>
+<main>
+  <h2 class="section-title">🎬 Original Videos</h2>
+  <div id="originalVideosWrapper" aria-live="polite"></div>
 
-  <footer>
-    <p>Powered by Azure Speech · Flask-SocketIO · GPT Translation Pipeline</p>
-  </footer>
+  <h2 class="section-title" style="color:#00e690;margin-top:36px">🌐 Translated Videos</h2>
+  <div id="translatedList" aria-live="polite"></div>
+</main>
 
-  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-  <script>
-    // Fixed API URL - connect to Flask server
-    const API = "http://127.0.0.1:5002";
-    const socket = io(API);
-    const overlay = document.getElementById("overlay");
-    const loaderText = document.getElementById("loaderText");
-    const loaderSubtext = document.getElementById("loaderSubtext");
-    const videoGrid = document.getElementById("videoGrid");
-    const loadingVideos = document.getElementById("loadingVideos");
-    const notification = document.getElementById("notification");
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div style="color:white;text-align:center;">
+    <div style="font-size:24px;">⏳ Processing...</div>
+    <p id="loaderSubtext" style="margin-top:8px;color:#ccc">Please wait...</p>
+  </div>
+</div>
 
-    // Notification system
-    function showNotification(message, type = 'info', duration = 3000) {
-      notification.textContent = message;
-      notification.className = `notification ${type} show`;
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, duration);
+<div id="notification" class="notification" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script>
+(() => {
+  const API = "http://127.0.0.1:5001";
+  const socket = io(API);
+
+  const overlay = document.getElementById("overlay");
+  const notif = document.getElementById("notification");
+
+  function showLoader(text){
+    document.getElementById("loaderSubtext").textContent = text || "Please wait...";
+    overlay.classList.add("show");
+  }
+  function hideLoader(){ overlay.classList.remove("show"); }
+
+  function notify(msg, type="success"){
+    notif.textContent = msg;
+    notif.style.background = (type === "error") ? "#ff4757" : "#00b894";
+    notif.classList.add("show");
+    setTimeout(()=> notif.classList.remove("show"), 2600);
+  }
+
+  function safeId(s){ return (s||"").replace(/[^a-z0-9]/gi,"_").toLowerCase(); }
+
+  /* ---------- load videos and render using safe DOM methods ---------- */
+  async function loadVideos(){
+    try {
+      const res = await fetch(API + "/videos");
+      if (!res.ok) throw new Error("Server returned " + res.status);
+      const data = await res.json();
+
+      renderOriginals(data.original_videos || []);
+      renderTranslated(data.translated_videos || []);
+    } catch (e) {
+      console.error("loadVideos error:", e);
+      notify("Failed to load videos", "error");
     }
+  }
 
-    function showLoader(msg = "Processing...", subtext = "Please wait, generating translation...") {
-      loaderText.textContent = msg;
-      loaderSubtext.textContent = subtext;
-      overlay.classList.add("show");
+  function renderOriginals(list){
+    const cont = document.getElementById("originalVideosWrapper");
+    cont.innerHTML = "";
+    for (const v of list){
+      const id = safeId(v.filename);
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const vid = document.createElement("video");
+      vid.src = API + v.src;
+      vid.controls = true;
+
+      const controls = document.createElement("div");
+      controls.className = "controls";
+
+      const sel = document.createElement("select");
+      sel.id = "lang_" + id;
+      sel.innerHTML = `<option value="">Lang</option>` + (v.available_langs || []).map(l => `<option value="${l}">${l.toUpperCase()}</option>`).join("");
+
+      const btn = document.createElement("button");
+      btn.className = "translate";
+      btn.textContent = "Translate";
+      btn.addEventListener("click", ()=> translateVideo(v.filename));
+
+      controls.appendChild(sel);
+      controls.appendChild(btn);
+
+      card.appendChild(vid);
+      card.appendChild(controls);
+      cont.appendChild(card);
     }
+  }
 
-    function hideLoader() {
-      overlay.classList.remove("show");
-    }
+  function renderTranslated(list){
+    const cont = document.getElementById("translatedList");
+    cont.innerHTML = "";
+    for (const v of list){
+      const sid = safeId(v.filename);
+      const url = API + v.src;
 
-    // Connection handling
-    socket.on('connect', () => {
-      console.log('✅ Connected to server');
-      showNotification('Connected to translation server', 'success', 2000);
-    });
+      const card = document.createElement("div");
+      card.className = "card translated-card";
+      card.dataset.filename = v.filename;
 
-    socket.on('disconnect', () => {
-      console.log('❌ Disconnected from server');
-      showNotification('Disconnected from server', 'error', 3000);
-    });
+      // dots (bottom-right)
+      const dots = document.createElement("div");
+      dots.className = "dots";
+      dots.tabIndex = 0;
+      dots.role = "button";
+      dots.title = "Open menu";
+      dots.textContent = "⋮";
+      dots.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        toggleMenuFor(sid);
+      });
+      dots.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); toggleMenuFor(sid); } });
 
-    socket.on('connect_error', (error) => {
-      console.log('❌ Connection error:', error);
-      showNotification('Failed to connect to server. Make sure Flask server is running on port 5002.', 'error', 5000);
-    });
+      // menu box
+      const menu = document.createElement("div");
+      menu.className = "menu-box";
+      menu.id = "menu_" + sid;
 
-    // =============================
-    // Load videos dynamically
-    // =============================
-    async function loadVideos() {
-      try {
-        const res = await fetch(API + "/videos");
-        if (!res.ok) throw new Error(`Server returned ${res.status}: ${res.statusText}`);
-        
-        const videos = await res.json();
-        
-        if (loadingVideos) loadingVideos.remove();
-        videoGrid.innerHTML = "";
+      const miDownload = document.createElement("div");
+      miDownload.className = "menu-item";
+      miDownload.innerHTML = "⬇ Download";
+      miDownload.addEventListener("click", (ev)=> { ev.stopPropagation(); downloadVideo(url, v.filename); closeAllMenus(); });
 
-        if (videos.length === 0) {
-          videoGrid.innerHTML = `
-            <div style="color:#888; text-align:center; padding:40px; grid-column: 1 / -1;">
-              No videos found. Please add video files to static/uploads/videos/ directory.
-            </div>`;
-          return;
-        }
+      const miSpeed = document.createElement("div");
+      miSpeed.className = "menu-item";
+      miSpeed.innerHTML = "⏱ Playback speed";
+      miSpeed.addEventListener("click", (ev)=> { ev.stopPropagation(); openSpeedMenu(sid); });
 
-        videos.forEach(v => {
-          const options = v.available_langs.map(l => 
-            `<option value="${l}">${l.toUpperCase()} - ${getLanguageName(l)}</option>`
-          ).join("");
-          
-          videoGrid.innerHTML += `
-            <div class="card">
-              <video id="vid_${v.id}" src="${API}${v.src}" controls crossorigin="anonymous" 
-                     poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7di50aXRsZX08L3RleHQ+PC9zdmc+">
-              </video>
-              <div style="padding:8px 4px; font-size:13px; color:#aaa;">${v.title || 'Video'}</div>
-              <div class="controls">
-                <select id="lang_${v.id}">
-                  <option value="">Select target language</option>${options}
-                </select>
-                <button class="translate" onclick="translateVideo('${v.id}')">🌐 Translate</button>
-              </div>
-            </div>`;
+      const miDelete = document.createElement("div");
+      miDelete.className = "menu-item";
+      miDelete.innerHTML = "🗑 Delete";
+      miDelete.addEventListener("click", async (ev)=> {
+        ev.stopPropagation();
+        await deleteVideo(v.filename);
+        closeAllMenus();
+      });
+
+      menu.appendChild(miDownload);
+      menu.appendChild(miSpeed);
+      menu.appendChild(miDelete);
+
+      // speed submenu
+      const sub = document.createElement("div");
+      sub.className = "submenu";
+      sub.id = "speed_" + sid;
+      sub.innerHTML = `
+        <div class="menu-item" data-speed="0.5">0.5x</div>
+        <div class="menu-item" data-speed="1">1x Normal</div>
+        <div class="menu-item" data-speed="1.5">1.5x</div>
+        <div class="menu-item" data-speed="2">2x</div>
+      `;
+      sub.querySelectorAll(".menu-item").forEach(mi => {
+        mi.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const sp = parseFloat(mi.dataset.speed || "1");
+          setSpeed(sid, sp);
+          closeAllMenus();
         });
-        
-        console.log(`✅ Loaded ${videos.length} videos`);
-        showNotification(`Loaded ${videos.length} videos`, 'success', 2000);
-        
-      } catch (err) {
-        if (loadingVideos) loadingVideos.remove();
-        videoGrid.innerHTML = `
-          <div style="color:#ff6b6b; text-align:center; padding:40px; grid-column: 1 / -1;">
-            Error loading videos: ${err.message}<br><br>
-            Make sure:<br>
-            • Flask server is running on http://127.0.0.1:5002<br>
-            • Video files are in static/uploads/videos/ directory<br>
-            • Server has the /videos endpoint configured
-          </div>`;
-        console.error('Error loading videos:', err);
-      }
+      });
+
+      // video element with id for speed set
+      const vid = document.createElement("video");
+      vid.id = "vid_" + sid;
+      vid.src = url;
+      vid.controls = true;
+
+      const caption = document.createElement("div");
+      caption.style.padding = "5px";
+      caption.style.color = "#aaa";
+      caption.textContent = v.filename;
+
+      // assemble
+      card.appendChild(dots);
+      card.appendChild(menu);
+      card.appendChild(sub);
+      card.appendChild(vid);
+      card.appendChild(caption);
+      cont.appendChild(card);
     }
+  }
 
-    function getLanguageName(code) {
-      const languages = {
-        'en': 'English', 'hi': 'Hindi', 'es': 'Spanish', 'fr': 'French',
-        'de': 'German', 'it': 'Italian', 'ru': 'Russian', 'ar': 'Arabic',
-        'zh': 'Chinese', 'ja': 'Japanese', 'ko': 'Korean', 'pt': 'Portuguese',
-        'nl': 'Dutch'
-      };
-      return languages[code] || code;
+  /* ---------- menu helpers ---------- */
+  function toggleMenuFor(sid){
+    closeAllMenus();
+    const m = document.getElementById("menu_" + sid);
+    if (!m) return;
+    m.style.display = (m.style.display === "block") ? "none" : "block";
+  }
+  function openSpeedMenu(sid){
+    closeAllMenus();
+    const sub = document.getElementById("speed_" + sid);
+    if (!sub) return;
+    sub.style.display = "block";
+  }
+  function closeAllMenus(){
+    document.querySelectorAll(".menu-box").forEach(x=> x.style.display = "none");
+    document.querySelectorAll(".submenu").forEach(x=> x.style.display = "none");
+  }
+  document.addEventListener("click", (ev) => {
+    // close only if click outside menu-box and not on a .dots
+    let target = ev.target;
+    if (target.closest && (target.closest(".menu-box") || target.classList.contains("dots") || target.closest(".submenu"))) {
+      return; // click inside menu or on dots — do nothing
     }
+    closeAllMenus();
+  });
 
-    // =============================
-    // Video translation
-    // =============================
-    async function translateVideo(videoId) {
-      const select = document.getElementById("lang_" + videoId);
-      const targetLang = select.value;
-      if (!targetLang) {
-        showNotification("Please select a target language", "error", 3000);
-        return;
+  /* ---------- actions ---------- */
+  function downloadVideo(url, fname){
+    // create <a> and click
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function setSpeed(sid, speed){
+    const vid = document.getElementById("vid_" + sid);
+    if (vid) vid.playbackRate = speed;
+    notify("Playback speed: " + speed + "x");
+  }
+
+  async function deleteVideo(filename){
+    if (!confirm("Delete permanently?")) return;
+    try {
+      const res = await fetch(API + "/delete-video", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ filename: filename, type: "translated" })
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify("Deleted");
+        await loadVideos();
+      } else {
+        notify(data.message || "Delete failed", "error");
       }
+    } catch (e) {
+      console.error("deleteVideo error:", e);
+      notify("Delete failed", "error");
+    }
+  }
 
-      showLoader("Translating Video", `Processing translation to ${getLanguageName(targetLang)}...`);
-      
-      try {
-        const res = await fetch(API + "/translate-video", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ video_id: videoId, target_lang: targetLang })
-        });
-        
-        if (!res.ok) throw new Error(`Server returned ${res.status}`);
-        
-        const data = await res.json();
-        
-        if (!data.ok) {
-          hideLoader();
-          showNotification("Translation failed: " + (data.msg || "Unknown error"), "error", 5000);
-          return;
-        }
-        
-        // Play the translated audio
-        const audio = new Audio(API + data.audio_url);
-        audio.play();
-        
-        // Update loader to show success
-        loaderText.textContent = "Translation Complete!";
-        loaderSubtext.textContent = `Playing ${getLanguageName(targetLang)} audio...`;
-        
-        showNotification(`Translation to ${getLanguageName(targetLang)} completed`, "success", 3000);
-        
-        // Hide loader after audio finishes or 5 seconds
-        audio.onended = hideLoader;
-        setTimeout(hideLoader, 5000);
-        
-      } catch (err) {
+  /* ---------- translate flow ---------- */
+  async function translateVideo(name){
+    const id = safeId(name);
+    const sel = document.getElementById("lang_" + id);
+    const lang = sel ? sel.value : "";
+    if (!lang) { notify("Select a language", "error"); return; }
+
+    showLoader("Generating audio & merging...");
+    try {
+      const res = await fetch(API + "/translate-video", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ video_name: name, target_lang: lang, socket_sid: socket.id })
+      });
+      const data = await res.json().catch(()=>null);
+      // server responds with accepted — actual progress comes via socket
+      // we keep loader open until socket says done/error
+      if (!res.ok) {
         hideLoader();
-        showNotification("Translation request failed: " + err.message, "error", 5000);
-        console.error('Translation error:', err);
+        notify("Translate request failed", "error");
+      } else {
+        notify("Translation started…", "success");
       }
+    } catch (e) {
+      hideLoader();
+      console.error("translateVideo error:", e);
+      notify("Translate request failed", "error");
     }
+  }
 
-    // =============================
-    // Mic voice → voice translation
-    // =============================
-    const micBtn = document.getElementById("micBtn");
-    let mediaRecorder, chunks = [];
-
-    micBtn.onclick = async () => {
-      if (mediaRecorder && mediaRecorder.state === "recording") {
-        mediaRecorder.stop();
-        micBtn.textContent = "🎤 Mic Voice → Voice";
-        micBtn.style.background = "#ff4757";
-        return;
+  socket.on("translate-progress", (msg) => {
+    try {
+      if (!msg) return;
+      if (msg.status === "done") {
+        hideLoader();
+        notify("✅ Video translated");
+        loadVideos();
+      } else if (msg.status === "error") {
+        hideLoader();
+        notify(msg.message || "Translation error", "error");
+      } else {
+        // intermediate update
+        document.getElementById("loaderSubtext").textContent = (msg.detail || msg.status || "");
       }
+    } catch (e) { console.error(e); }
+  });
 
+  /* ---------- mic translate ---------- */
+  function attachMicHandler(){
+    const micBtn = document.getElementById("micBtn");
+    const micSelect = document.getElementById("micLangSelect");
+    if (!micBtn || !micSelect) return;
+    micBtn.addEventListener("click", async () => {
+      // request mic, record ~4 seconds (non-blocking)
+      const target = micSelect.value || "hi";
+      notify("🎤 Recording 4s...");
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        chunks = [];
-
-        mediaRecorder.ondataavailable = e => chunks.push(e.data);
-        mediaRecorder.onstop = async () => {
-          const blob = new Blob(chunks, { type: "audio/webm" });
-          const b64 = await blobToBase64(blob);
-          const targetLang = document.getElementById("micLangSelect").value;
-          showLoader("Voice Translation", `Translating to ${getLanguageName(targetLang)}...`);
-          socket.emit("mic-translate", { audio_b64: b64, src_lang: "auto", target_lang: targetLang });
+        const recorder = new MediaRecorder(stream);
+        const parts = [];
+        recorder.ondataavailable = (e) => parts.push(e.data);
+        recorder.onstop = () => {
+          const blob = new Blob(parts, { type: "audio/webm" });
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            showLoader("Sending audio for transcription...");
+            socket.emit("mic-translate", { audio_b64: reader.result, target_lang: target });
+          };
+          reader.readAsDataURL(blob);
         };
-
-        mediaRecorder.start();
-        micBtn.textContent = "⏺️ Recording... Click to stop";
-        micBtn.style.background = "#ff6b6b";
-        
-        // Auto-stop after 6 seconds
-        setTimeout(() => {
-          if (mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-            micBtn.textContent = "🎤 Mic Voice → Voice";
-            micBtn.style.background = "#ff4757";
-          }
-        }, 6000);
-        
+        recorder.start();
+        setTimeout(()=> recorder.stop(), 4000);
       } catch (err) {
-        showNotification("Microphone access error: " + err.message, "error", 5000);
-        console.error('Microphone error:', err);
+        console.error("mic error:", err);
+        notify("Mic access denied", "error");
       }
-    };
+    });
 
-    socket.on("mic-translate-result", msg => {
-      if (!msg.ok) {
-        hideLoader();
-        showNotification("Mic translation failed: " + msg.msg, "error", 5000);
+    socket.on("mic-translate-result", (msg) => {
+      hideLoader();
+      if (!msg) { notify("Mic translation failed", "error"); return; }
+      if (!msg.success) {
+        notify(msg.error || "Mic translation failed", "error");
         return;
       }
-      
-      // Play the translated audio
-      const audio = new Audio(API + msg.audio_url);
-      audio.play();
-      
-      loaderText.textContent = "Voice Translation Complete!";
-      loaderSubtext.textContent = `Playing ${getLanguageName(msg.target_lang)} audio...`;
-      
-      showNotification(`Voice translated to ${getLanguageName(msg.target_lang)}`, "success", 3000);
-      
-      audio.onended = hideLoader;
-      setTimeout(hideLoader, 5000);
+      notify("🎉 Mic translated");
+      // play TTS if present
+      if (msg.audio_url) {
+        const audio = new Audio(API + msg.audio_url);
+        audio.play();
+      } else if (msg.translated) {
+        console.log("Translated text:", msg.translated);
+      }
     });
+  }
 
-    function blobToBase64(blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    }
+  /* ---------- socket connect error ---------- */
+  socket.on("connect_error", () => notify("Socket connect failed", "error"));
+  socket.on("connect", () => console.log("socket connected"));
 
-    // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      loadVideos();
-    });
-  </script>
+  /* ---------- init ---------- */
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadVideos();
+    attachMicHandler();
+  });
+
+  // expose for debugging (optional)
+  window.__app = { loadVideos };
+
+})();
+</script>
 </body>
 </html>

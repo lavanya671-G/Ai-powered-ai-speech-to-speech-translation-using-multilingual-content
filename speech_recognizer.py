@@ -8,6 +8,8 @@ import time
 import subprocess
 from pydub import AudioSegment, silence
 from dotenv import load_dotenv
+import ffmpeg
+import uuid
 
 # --- Force local FFmpeg path ---
 FFMPEG_PATH = os.path.join(os.getcwd(), "ffmpeg", "bin", "ffmpeg.exe")
@@ -98,6 +100,22 @@ def run_ffmpeg_command(input_path, output_path):
     except Exception as e:
         print(f"❌ FFmpeg subprocess error: {e}")
         return False
+
+
+def convert_webm_to_wav(input_path, output_folder="results/temp_audio"):
+    out_name = f"{uuid.uuid4().hex}.wav"
+    out_path = os.path.join(output_folder, out_name)
+
+    (
+        ffmpeg
+        .input(input_path)
+        .output(out_path, ac=1, ar=16000, format='wav')
+        .overwrite_output()
+        .run(quiet=True)
+    )
+
+    return out_path
+
 
 def split_audio_to_chunks(file_path, min_silence_len=1500, silence_thresh=-40, chunk_length_ms=CHUNK_LENGTH_MS):
     """Split audio intelligently for better STT performance - FIXED FFMPEG"""
