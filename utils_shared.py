@@ -1,11 +1,5 @@
 # utils_shared.py
 
-"""
-UTILS_SHARED.PY
-Common helper functions and constants shared between app.py and translation_pipeline.py
-"""
-
-# ✅ Supported language codes
 SUPPORTED_LANG_CODES = [
     'en', 'hi', 'es', 'fr', 'de', 'ja', 'zh', 'it', 'ru', 'ar',
      'ko', 'pt', 'zh', 'nl'
@@ -28,7 +22,7 @@ def translate_text_single(translator_pipeline, text, target_lang):
         result = translator_pipeline(text, max_length=512)
         return ensure_str_from_translation(result)
     except Exception as e:
-        print(f"⚠️ Translation failed for {target_lang}: {e}")
+        print(f" Translation failed for {target_lang}: {e}")
         return None
 def cleanup_temp_files(days=2):
     """Delete temp files older than given days"""

@@ -1,8 +1,4 @@
 #ott_integration.py
-"""
-OTT PLATFORM INTEGRATION MODULE
-Milestone 3: Embedding translated speech into OTT digital feeds
-"""
 
 import os
 import json
@@ -11,7 +7,7 @@ from datetime import datetime
 
 class OTTIntegration:
     def __init__(self):
-        print("📡 INITIALIZING OTT PLATFORM INTEGRATION")
+        print(" INITIALIZING OTT PLATFORM INTEGRATION")
         
         # OTT platform configuration
         self.ott_config = {
@@ -32,57 +28,57 @@ class OTTIntegration:
         # Stream management
         self.active_streams = {}
         
-        print("✅ OTT Integration initialized")
+        print(" OTT Integration initialized")
     
     def connect_to_platform(self, stream_config=None):
         """Connect to OTT platform"""
-        print("\n🔗 CONNECTING TO OTT PLATFORM")
+        print("\n CONNECTING TO OTT PLATFORM")
         print("=" * 40)
         
         try:
             # Simulate connection to OTT platform
-            print("📡 Establishing connection to OTT API...")
+            print(" Establishing connection to OTT API...")
             time.sleep(1)  # Simulate connection time
             
-            # Configure stream
+           
             if stream_config:
                 self.ott_config.update(stream_config)
             
-            # Test connection
+            
             test_result = self._test_connection()
             
             if test_result:
                 self.is_connected = True
                 self.connection_stats['last_success'] = datetime.now()
-                print("✅ Successfully connected to OTT platform")
-                print(f"🎯 Stream Key: {self.ott_config['stream_key']}")
+                print(" Successfully connected to OTT platform")
+                print(f" Stream Key: {self.ott_config['stream_key']}")
                 return True
             else:
-                print("❌ Failed to connect to OTT platform")
+                print(" Failed to connect to OTT platform")
                 return False
                 
         except Exception as e:
-            print(f"❌ Connection error: {e}")
+            print(f" Connection error: {e}")
             return False
     
     def _test_connection(self):
         """Test connection to OTT platform"""
         try:
             # Simulate API test
-            print("🧪 Testing OTT API connection...")
+            print(" Testing OTT API connection...")
             time.sleep(0.5)
             
             # In real implementation, this would be an actual API call
             return True  # Simulate success
             
         except Exception as e:
-            print(f"❌ Connection test failed: {e}")
+            print(f" Connection test failed: {e}")
             return False
     
     def send_translation_to_feed(self, translation_data, stream_id="main"):
         """Send translated content to OTT feed"""
         if not self.is_connected:
-            print("⚠️  Not connected to OTT platform")
+            print("  Not connected to OTT platform")
             return False
         
         try:
@@ -95,15 +91,15 @@ class OTTIntegration:
             if success:
                 self.connection_stats['total_sent'] += 1
                 self.connection_stats['last_success'] = datetime.now()
-                print(f"📡 OTT Feed: Sent translation #{self.connection_stats['total_sent']}")
+                print(f" OTT Feed: Sent translation #{self.connection_stats['total_sent']}")
                 return True
             else:
                 self.connection_stats['failed_attempts'] += 1
-                print(f"❌ Failed to send to OTT feed (attempt {self.connection_stats['failed_attempts']})")
+                print(f" Failed to send to OTT feed (attempt {self.connection_stats['failed_attempts']})")
                 return False
                 
         except Exception as e:
-            print(f"❌ OTT send error: {e}")
+            print(f" OTT send error: {e}")
             self.connection_stats['failed_attempts'] += 1
             return False
     
@@ -138,19 +134,19 @@ class OTTIntegration:
         """Send payload to OTT API"""
         try:
             # Simulate API call
-            print(f"🔄 Sending to OTT API... (Stream: {payload['metadata']['stream_id']})")
+            print(f" Sending to OTT API... (Stream: {payload['metadata']['stream_id']})")
             time.sleep(0.1)  # Simulate network delay
             
             # Simulate successful send
             return True
             
         except Exception as e:
-            print(f"❌ API send error: {e}")
+            print(f" API send error: {e}")
             return False
     
     def create_stream(self, stream_name, config=None):
         """Create a new stream on OTT platform"""
-        print(f"\n🎬 CREATING OTT STREAM: {stream_name}")
+        print(f"\n CREATING OTT STREAM: {stream_name}")
         
         try:
             stream_config = {
@@ -166,13 +162,13 @@ class OTTIntegration:
             # Register stream with OTT platform
             self.active_streams[stream_name] = stream_config
             
-            print(f"✅ Stream created: {stream_name}")
-            print(f"📊 Configuration: {json.dumps(stream_config, indent=2)}")
+            print(f" Stream created: {stream_name}")
+            print(f" Configuration: {json.dumps(stream_config, indent=2)}")
             
             return stream_name
             
         except Exception as e:
-            print(f"❌ Stream creation error: {e}")
+            print(f" Stream creation error: {e}")
             return None
     
     def _get_target_languages(self):
@@ -209,8 +205,8 @@ class OTTIntegration:
         self.is_connected = False
         self.active_streams.clear()
         
-        print("✅ Disconnected from OTT platform")
-        print(f"📊 Final stats: {self.connection_stats['total_sent']} sent, "
+        print(" Disconnected from OTT platform")
+        print(f" Final stats: {self.connection_stats['total_sent']} sent, "
               f"{self.connection_stats['failed_attempts']} failed")
 
 # Backward compatibility

@@ -19,7 +19,7 @@ class EnhancedDataPreprocessor:
     # Add this method to the EnhancedDataPreprocessor class in data_preprocessor.py
     def prepare_training_data(self):
         """Step 4: Prepare clean training pairs - compatibility method"""
-        print("\n🔄 PREPARING TRAINING DATA")
+        print("\n PREPARING TRAINING DATA")
         print("=" * 40)
         
         # Load all data
@@ -42,7 +42,7 @@ class EnhancedDataPreprocessor:
                         'quality': 'high'
                     })
         
-        print(f"📊 Prepared {len(training_pairs)} training pairs")
+        print(f" Prepared {len(training_pairs)} training pairs")
         
         # Save the cleaned data
         self.save_cleaned_data(training_pairs)
@@ -51,7 +51,7 @@ class EnhancedDataPreprocessor:
     
     def load_all_transcription_data(self) -> Dict[str, List[Dict]]:
         """Load all transcription data from JSON files"""
-        print("📂 Loading all transcription data...")
+        print(" Loading all transcription data...")
         
         all_data = {'en': [], 'hi': []}
         
@@ -79,16 +79,16 @@ class EnhancedDataPreprocessor:
                                     'original_key': key
                                 })
                     
-                    print(f"✅ Loaded {len(all_data[lang])} {lang.upper()} transcriptions from {os.path.basename(file_path)}")
+                    print(f" Loaded {len(all_data[lang])} {lang.upper()} transcriptions from {os.path.basename(file_path)}")
                     
                 except Exception as e:
-                    print(f"❌ Error loading {file_path}: {e}")
+                    print(f" Error loading {file_path}: {e}")
         
         return all_data
     
     def load_all_translation_data(self) -> List[Dict]:
         """Load all translation data for training pairs"""
-        print("📂 Loading all translation data...")
+        print(" Loading all translation data...")
         
         translation_pairs = []
         
@@ -123,9 +123,9 @@ class EnhancedDataPreprocessor:
                                         })
                             
                         except Exception as e:
-                            print(f"❌ Error loading {file_path}: {e}")
+                            print(f" Error loading {file_path}: {e}")
         
-        print(f"✅ Loaded {len(translation_pairs)} translation pairs")
+        print(f" Loaded {len(translation_pairs)} translation pairs")
         return translation_pairs
     
     def clean_text(self, text: str) -> str:
@@ -149,7 +149,7 @@ class EnhancedDataPreprocessor:
     
     def prepare_training_pairs(self) -> List[Dict]:
         """Step 4: Prepare clean training pairs"""
-        print("\n🔄 PREPARING TRAINING DATA")
+        print("\n PREPARING TRAINING DATA")
         print("=" * 40)
         
         # Load all data
@@ -184,7 +184,7 @@ class EnhancedDataPreprocessor:
                     'quality': 'low'
                 })
         
-        print(f"📊 Prepared {len(training_pairs)} training pairs")
+        print(f" Prepared {len(training_pairs)} training pairs")
         print(f"   - High quality: {len([p for p in training_pairs if p.get('quality') == 'high'])}")
         print(f"   - Synthetic: {len([p for p in training_pairs if p.get('quality') == 'low'])}")
         
@@ -192,7 +192,7 @@ class EnhancedDataPreprocessor:
     
     def save_cleaned_data(self, training_pairs: List[Dict]):
         """Save cleaned training data"""
-        print("\n💾 SAVING CLEANED TRAINING DATA")
+        print("\n SAVING CLEANED TRAINING DATA")
         print("=" * 40)
         
         # Save as JSON
@@ -214,9 +214,9 @@ class EnhancedDataPreprocessor:
         df = pd.DataFrame(df_data)
         df.to_csv(csv_file, index=False, encoding='utf-8')
         
-        print(f"✅ Cleaned data saved:")
-        print(f"   📄 JSON: {json_file}")
-        print(f"   📊 CSV: {csv_file}")
+        print(f" Cleaned data saved:")
+        print(f"    JSON: {json_file}")
+        print(f"    CSV: {csv_file}")
         
         return json_file, csv_file
     

@@ -1,8 +1,5 @@
 #model_evaluator.py
-"""
-MODEL EVALUATOR
-Step 6 & 7: Evaluate model with BLEU scores, precision, recall, F1, and latency
-"""
+
 
 import os
 import json
@@ -13,20 +10,14 @@ from datetime import datetime
 
 
 class ModelEvaluator:
-    """
-    Evaluates translation model quality across BLEU, F1, and latency metrics.
-    Supports both normal and strict evaluation modes.
-    """
 
     def __init__(self, strict_mode=False):
-        """
-        strict_mode=True will raise an AssertionError if any metric < 0.95.
-        """
+        
         self.results_dir = "results/evaluation_results"
         os.makedirs(self.results_dir, exist_ok=True)
         self.strict_mode = strict_mode
 
-    # ✅ BLEU calculation
+    #  BLEU calculation
     def calculate_bleu(self, candidate, reference):
         """Calculate BLEU score between candidate and reference (0–1 scale)."""
         if not candidate or not reference:
@@ -35,10 +26,10 @@ class ModelEvaluator:
             bleu = sacrebleu.corpus_bleu([candidate], [[reference]])
             return float(bleu.score / 100.0)
         except Exception as e:
-            print(f"❌ BLEU calculation error: {e}")
+            print(f" BLEU calculation error: {e}")
             return 0.0
 
-    # ✅ Precision, Recall, and F1 computation
+    #  Precision, Recall, and F1 computation
     def calculate_accuracy(self, translated_text, reference_text):
         """
         Calculate precision, recall, and F1 using word overlap.
@@ -69,7 +60,7 @@ class ModelEvaluator:
             }
 
         except Exception as e:
-            print(f"❌ Accuracy calculation error: {e}")
+            print(f" Accuracy calculation error: {e}")
             return {"precision": 0.0, "recall": 0.0, "f1": 0.0, "meets_threshold": False}
 
     def measure_latency(self, fn, *args, **kwargs):
@@ -90,7 +81,7 @@ class ModelEvaluator:
         Evaluate translation model using BLEU, precision, recall, F1, and latency.
         translator must implement: translate_text(text, source_lang, target_lang)
         """
-        print("\n📊 COMPREHENSIVE MODEL EVALUATION")
+        print("\n COMPREHENSIVE MODEL EVALUATION")
         print("=" * 70)
 
         # Test corpus
@@ -120,7 +111,7 @@ class ModelEvaluator:
         successful_translations = 0
         total_translations = 0
 
-        print("\n🌍 EVALUATING TRANSLATIONS:\n")
+        print("\n EVALUATING TRANSLATIONS:\n")
 
         for source_lang in ["en"]:
             for target_lang in ["hi", "es", "fr"]:
@@ -164,7 +155,7 @@ class ModelEvaluator:
                         all_latencies.append(latency)
 
                         print(
-                            f"✅ {pair_key.upper()} | Sample {i+1} | "
+                            f" {pair_key.upper()} | Sample {i+1} | "
                             f"BLEU={bleu_score:.3f} | "
                             f"P={acc['precision']:.2f} R={acc['recall']:.2f} F1={acc['f1']:.2f} | "
                             f"Latency={latency:.3f}s"
@@ -172,14 +163,14 @@ class ModelEvaluator:
 
                         # Warn or fail if below threshold
                         if not acc["meets_threshold"]:
-                            print(f"⚠️  {pair_key.upper()} | Below 95% threshold "
+                            print(f"  {pair_key.upper()} | Below 95% threshold "
                                   f"(P={acc['precision']:.2f}, R={acc['recall']:.2f}, F1={acc['f1']:.2f})")
                             if self.strict_mode:
                                 raise AssertionError(
-                                    f"❌ Translation quality below 95% for {pair_key.upper()} Sample {i+1}"
+                                    f" Translation quality below 95% for {pair_key.upper()} Sample {i+1}"
                                 )
                     else:
-                        print(f"❌ {pair_key.upper()} | Sample {i+1}: No translation returned")
+                        print(f" {pair_key.upper()} | Sample {i+1}: No translation returned")
 
         # Compute averages
         if total_translations > 0:
@@ -197,7 +188,7 @@ class ModelEvaluator:
         self._save_evaluation_results(evaluation_results)
         return evaluation_results
 
-    # ✅ Backward compatibility wrapper for Milestone-3
+    #  Backward compatibility wrapper for Milestone-3
     def run_comprehensive_evaluation(self, translator):
         """Compatibility alias for translation_pipeline.py"""
         return self.evaluate_translation_quality(translator)
@@ -205,19 +196,19 @@ class ModelEvaluator:
     def _display_evaluation_results(self, results):
         """Pretty-print evaluation results"""
         print("\n" + "=" * 70)
-        print("📈 FINAL EVALUATION RESULTS")
+        print(" FINAL EVALUATION RESULTS")
         print("=" * 70)
 
         overall = results.get("overall_metrics", {})
 
-        print(f"\n🏆 OVERALL PERFORMANCE:")
-        print(f"   📊 Average BLEU Score: {overall.get('average_bleu_score', 0):.3f}")
-        print(f"   🎯 Average F1 Score: {overall.get('average_f1_score', 0):.3f}")
-        print(f"   ⚡ Average Latency: {overall.get('average_latency', 0):.3f}s")
-        print(f"   📈 Success Rate: {overall.get('success_rate', 0):.1%}")
-        print(f"   🔢 Total Tests: {overall.get('total_translations', 0)}")
+        print(f"\n OVERALL PERFORMANCE:")
+        print(f"    Average BLEU Score: {overall.get('average_bleu_score', 0):.3f}")
+        print(f"    Average F1 Score: {overall.get('average_f1_score', 0):.3f}")
+        print(f"    Average Latency: {overall.get('average_latency', 0):.3f}s")
+        print(f"    Success Rate: {overall.get('success_rate', 0):.1%}")
+        print(f"    Total Tests: {overall.get('total_translations', 0)}")
 
-        print(f"\n📋 DETAILED PERFORMANCE BY LANGUAGE PAIR:")
+        print(f"\n DETAILED PERFORMANCE BY LANGUAGE PAIR:")
         for pair, metrics in results.get("language_pairs", {}).items():
             if metrics.get("successful_translations", 0) > 0:
                 avg_bleu = np.mean(metrics["bleu_scores"]) if metrics["bleu_scores"] else 0
@@ -232,9 +223,9 @@ class ModelEvaluator:
             eval_file = os.path.join(self.results_dir, f"evaluation_{timestamp}.json")
             with open(eval_file, "w", encoding="utf-8") as f:
                 json.dump(results, f, ensure_ascii=False, indent=2)
-            print(f"\n💾 Evaluation results saved to: {eval_file}")
+            print(f"\n Evaluation results saved to: {eval_file}")
         except Exception as e:
-            print(f"❌ Error saving evaluation results: {e}")
+            print(f" Error saving evaluation results: {e}")
 
 
 # Backward compatibility alias

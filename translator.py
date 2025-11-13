@@ -27,15 +27,13 @@ class EnhancedTranslator:
         return self.HF_LANG_MAP.get(lang_code, lang_code)
 
     def translate(self, text, source_lang, target_lang):
-        """
-        Translate a single string from source_lang to target_lang
-        """
+        
         try:
-            # Normalize language codes
+            
             src_norm = self._normalize_lang_code(source_lang)
             tgt_norm = self._normalize_lang_code(target_lang)
             
-            # Skip if same language after normalization
+         
             if src_norm == tgt_norm:
                 return f"[Skipped: same language {src_norm}]"
             
@@ -53,16 +51,16 @@ class EnhancedTranslator:
             
             result = self.tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)[0]
 
-            # Save translation to DB
+            
             try:
                 save_line_translation(text, source_lang, {target_lang: result}, line_num=1, source_type="auto")
             except Exception as e:
-                print(f"⚠️ Warning: failed to save translation to DB: {e}")
+                print(f" Warning: failed to save translation to DB: {e}")
 
             return result
             
         except Exception as e:
-            print(f"❌ Translation error ({source_lang}->{target_lang}): {e}")
+            print(f" Translation error ({source_lang}->{target_lang}): {e}")
             return f"[Error: {str(e)}]"
 
     def translate_to_all_languages(self, text, source_lang):
@@ -72,20 +70,18 @@ class EnhancedTranslator:
         results = {}
         source_norm = self._normalize_lang_code(source_lang)
         
-        for tgt in set(self.HF_LANG_MAP.values()):  # Use unique target languages
+        for tgt in set(self.HF_LANG_MAP.values()):  
             if tgt == source_norm:
-                continue  # Skip same language
+                continue  
             try:
                 results[tgt] = self.translate(text, source_lang, tgt)
             except Exception as e:
                 results[tgt] = f"[Error: {e}]"
         return results
 
-    # -----------------------
-    # Helper methods for Milestone-3
-    # -----------------------
+  
     def get_supported_languages(self):
-        return list(set(self.HF_LANG_MAP.values()))  # Return unique languages
+        return list(set(self.HF_LANG_MAP.values()))  
 
     def get_loaded_models(self):
         return [self.model_name]
@@ -108,10 +104,9 @@ class EnhancedTranslator:
                     
             return results
         except Exception as e:
-            print(f"❌ Batch translation error: {e}")
+            print(f" Batch translation error: {e}")
             return {}
 
-# Example usage
 if __name__ == "__main__":
     translator = EnhancedTranslator()
     sample_text = "Hello, how are you?"

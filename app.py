@@ -18,11 +18,11 @@ except Exception:
 # ---------------------------
 def check_environment():
     """Check environment before importing anything"""
-    print("🔍 CHECKING ENVIRONMENT...")
+    print(" CHECKING ENVIRONMENT...")
     
     # Check .env file
     if not os.path.exists('.env'):
-        print("❌ .env file missing! Create one with:")
+        print(".env file missing! Create one with:")
         print("   SPEECH_KEY=your_azure_speech_key")
         print("   SPEECH_REGION=your_azure_region")
         return False
@@ -35,17 +35,17 @@ def check_environment():
     speech_region = os.getenv("SPEECH_REGION")
     
     if not speech_key or not speech_region:
-        print("❌ Missing Azure credentials in .env file!")
+        print(" Missing Azure credentials in .env file!")
         print("   Please add SPEECH_KEY and SPEECH_REGION")
         return False
     
-    print(f"✅ Environment check passed")
+    print(f" Environment check passed")
     print(f"   Region: {speech_region}")
     return True
 
 # Run environment check first
 if not check_environment():
-    print("⚠️ Some features may not work without proper configuration")
+    print(" Some features may not work without proper configuration")
 
 # ---------------------------
 # Import with Enhanced Error Handling
@@ -59,29 +59,29 @@ def safe_import(module_name, class_name=None):
         else:
             return __import__(module_name)
     except ImportError as e:
-        print(f"⚠️ Import failed for {module_name}: {e}")
+        print(f"Import failed for {module_name}: {e}")
         return None
     except Exception as e:
-        print(f"❌ Error importing {module_name}: {e}")
+        print(f" Error importing {module_name}: {e}")
         return None
 
 # Import translation pipeline with error handling
 try:
     from translation_pipeline import TranslationPipeline
     TRANSLATION_PIPELINE_AVAILABLE = True
-    print("✅ Translation pipeline: Available")
+    print(" Translation pipeline: Available")
 except Exception as e:
-    print(f"⚠️ Translation pipeline not available: {e}")
+    print(f" Translation pipeline not available: {e}")
     TRANSLATION_PIPELINE_AVAILABLE = False
 
 # Milestone 3 optional modules
 try:
     from ott_integration import OTTIntegration
     MILESTONE_3_AVAILABLE = True
-    print("✅ OTT Integration: Available")
+    print(" OTT Integration: Available")
 except Exception:
     MILESTONE_3_AVAILABLE = False
-    print("⚠️ OTT Integration: Not available")
+    print(" OTT Integration: Not available")
 
 # TTS module - Enhanced import
 TTS_AVAILABLE = False
@@ -89,23 +89,23 @@ tts_engine = None
 try:
     from text_to_speech import MultilingualTextToSpeech
     TTS_AVAILABLE = True
-    print("✅ TTS Module: Imported successfully")
+    print(" TTS Module: Imported successfully")
     
     # Initialize TTS engine with better error handling
     try:
         tts_engine = MultilingualTextToSpeech()
         if tts_engine.is_available():
-            print("✅ TTS Engine: Initialized successfully")
+            print(" TTS Engine: Initialized successfully")
         else:
-            print("⚠️ TTS Engine: No TTS engines available")
+            print(" TTS Engine: No TTS engines available")
             TTS_AVAILABLE = False
     except Exception as e:
-        print(f"❌ Failed to initialize TTS engine: {e}")
+        print(f" Failed to initialize TTS engine: {e}")
         tts_engine = None
         TTS_AVAILABLE = False
         
 except Exception as e:
-    print(f"⚠️ TTS module not available: {e}")
+    print(f" TTS module not available: {e}")
     TTS_AVAILABLE = False
 
 # ---------------------------
@@ -121,7 +121,7 @@ def initialize_directories():
     ]
     for d in dirs:
         os.makedirs(d, exist_ok=True)
-    print("✅ Directories initialized")
+    print(" Directories initialized")
 
 initialize_directories()
 
@@ -133,9 +133,9 @@ EnhancedSpeechRecognizer = None
 
 try:
     from speech_recognizer import EnhancedSpeechRecognizer
-    print("✅ Speech Recognizer: Imported")
+    print(" Speech Recognizer: Imported")
 except Exception as e:
-    print(f"❌ Failed to import Speech Recognizer: {e}")
+    print(f" Failed to import Speech Recognizer: {e}")
     # Create a fallback class
     class EnhancedSpeechRecognizer:
         def __init__(self):
@@ -150,9 +150,9 @@ except Exception as e:
 try:
     from translator import EnhancedTranslator as Translator
     translator = Translator()
-    print("✅ Translator: Initialized")
+    print(" Translator: Initialized")
 except Exception as e:
-    print(f"❌ Failed to import Translator: {e}")
+    print(f" Failed to import Translator: {e}")
     # Create fallback translator
     class FallbackTranslator:
         def translate(self, text, src_lang, target_lang):
@@ -166,9 +166,9 @@ except Exception as e:
 try:
     from db_json import save_line_translation
     from utils_shared import SUPPORTED_LANG_CODES, ensure_str_from_translation
-    print("✅ Database & Utils: Imported")
+    print(" Database & Utils: Imported")
 except Exception as e:
-    print(f"⚠️ Database/Utils import warning: {e}")
+    print(f" Database/Utils import warning: {e}")
     # Fallback functions
     SUPPORTED_LANG_CODES = ['en', 'hi', 'es', 'fr', 'de']
     
@@ -197,7 +197,7 @@ def translate_text_single(text, src_lang, target_lang, **kwargs):
         result = translator.translate(text, src_lang, target_lang, **kwargs)
         return ensure_str_from_translation(result)
     except Exception as e:
-        print(f"❌ Translation error ({src_lang}->{target_lang}): {e}")
+        print(f" Translation error ({src_lang}->{target_lang}): {e}")
         return f"[Error: {str(e)}]"
 
 # ---------------------------
@@ -205,7 +205,7 @@ def translate_text_single(text, src_lang, target_lang, **kwargs):
 # ---------------------------
 def diagnose_speech_services():
     """Diagnose speech services and provide fixes"""
-    print("\n🔍 DIAGNOSING SPEECH SERVICES")
+    print("\n DIAGNOSING SPEECH SERVICES")
     print("=" * 50)
     
     # Check Azure credentials
@@ -215,109 +215,109 @@ def diagnose_speech_services():
     speech_key = os.getenv("SPEECH_KEY")
     speech_region = os.getenv("SPEECH_REGION")
     
-    print(f"📋 Azure Speech Configuration:")
+    print(f" Azure Speech Configuration:")
     print(f"   SPEECH_KEY: {'***' + speech_key[-8:] if speech_key else '❌ MISSING'}")
     print(f"   SPEECH_REGION: {speech_region or '❌ MISSING'}")
     
     # Check Azure SDK
     try:
         import azure.cognitiveservices.speech as speechsdk
-        print("   ✅ Azure Speech SDK: Available")
+        print("    Azure Speech SDK: Available")
         
         # Test configuration
         if speech_key and speech_region:
             try:
                 speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=speech_region)
-                print("   ✅ Azure Credentials: Valid")
+                print("    Azure Credentials: Valid")
             except Exception as e:
-                print(f"   ❌ Azure Credentials: Invalid - {e}")
+                print(f"    Azure Credentials: Invalid - {e}")
         else:
-            print("   ❌ Azure Credentials: Missing")
+            print("    Azure Credentials: Missing")
             
     except ImportError:
-        print("   ❌ Azure Speech SDK: Not installed")
+        print("    Azure Speech SDK: Not installed")
     
     # Check TTS
     try:
         if TTS_AVAILABLE and tts_engine:
             tts_info = tts_engine.get_engine_info()
-            print(f"   ✅ TTS Engine: {tts_info}")
+            print(f"    TTS Engine: {tts_info}")
         else:
-            print("   ❌ TTS Engine: Not available")
+            print("    TTS Engine: Not available")
     except Exception as e:
-        print(f"   ❌ TTS Engine: Failed - {e}")
+        print(f"    TTS Engine: Failed - {e}")
     
     # Check Speech Recognizer
     try:
         recognizer = EnhancedSpeechRecognizer()
-        print("   ✅ Speech Recognizer: Initialized")
+        print("    Speech Recognizer: Initialized")
     except Exception as e:
-        print(f"   ❌ Speech Recognizer: Failed - {e}")
+        print(f"   Speech Recognizer: Failed - {e}")
     
     print("🔍 Diagnosis completed")
 
 def test_microphone_functionality():
     """Test microphone functionality"""
-    print("\n🎤 TESTING MICROPHONE FUNCTIONALITY")
+    print("\n TESTING MICROPHONE FUNCTIONALITY")
     print("=" * 50)
     
     try:
         recognizer = EnhancedSpeechRecognizer()
-        print("✅ Speech Recognizer: Initialized")
+        print(" Speech Recognizer: Initialized")
         
         # Quick test
         print("🎤 Speak a short phrase (5 seconds)...")
         text, lang = recognizer.recognize_from_microphone()
         
         if text:
-            print(f"✅ Microphone Test: SUCCESS - '{text}' ({lang})")
+            print(f" Microphone Test: SUCCESS - '{text}' ({lang})")
             return True
         else:
-            print("❌ Microphone Test: FAILED - No speech detected")
+            print("Microphone Test: FAILED - No speech detected")
             return False
             
     except Exception as e:
-        print(f"❌ Microphone Test: ERROR - {e}")
+        print(f" Microphone Test: ERROR - {e}")
         return False
 
 def test_tts_functionality():
     """Test TTS functionality"""
-    print("\n🔊 TESTING TTS FUNCTIONALITY")
+    print("\n TESTING TTS FUNCTIONALITY")
     print("=" * 50)
     
     if not TTS_AVAILABLE or not tts_engine:
-        print("❌ TTS not available")
+        print(" TTS not available")
         return False
         
     try:
         test_text = "This is a test of the text to speech system."
-        print(f"🔊 Testing TTS with: '{test_text}'")
+        print(f" Testing TTS with: '{test_text}'")
         
         success = tts_engine.speak_text(test_text, 'en')
         if success:
-            print("✅ TTS Test: SUCCESS")
+            print(" TTS Test: SUCCESS")
             return True
         else:
-            print("❌ TTS Test: FAILED")
+            print(" TTS Test: FAILED")
             return False
             
     except Exception as e:
-        print(f"❌ TTS Test: ERROR - {e}")
+        print(f" TTS Test: ERROR - {e}")
         return False
 
 # ---------------------------
 # OTT readiness check
 # ---------------------------
 def check_ott_readiness_menu():
-    print("\n🎯 OTT READINESS CHECK")
+    print("\n OTT READINESS CHECK")
     print("=" * 40)
     
     if not MILESTONE_3_AVAILABLE:
-        print("❌ OTT integration not available")
+        print(" OTT integration not available")
         return
         
     if not TRANSLATION_PIPELINE_AVAILABLE:
-        print("❌ Translation pipeline not available")
+        print(" Translation pipeline not available")
         return
         
     pipeline = TranslationPipeline()
@@ -325,18 +325,18 @@ def check_ott_readiness_menu():
     # Check for external data files
     external_data_dir = "external_data"
     if not os.path.exists(external_data_dir):
-        print(f"❌ No external_data directory found")
+        print(f" No external_data directory found")
         return
         
     files = [os.path.join(external_data_dir, f) for f in os.listdir(external_data_dir) 
              if f.endswith(('.txt', '.json'))]
     
     if not files:
-        print("❌ No input files found in 'external_data/' to analyze OTT readiness.")
-        print("💡 Add some .txt or .json files to external_data/ folder")
+        print(" No input files found in 'external_data/' to analyze OTT readiness.")
+        print(" Add some .txt or .json files to external_data/ folder")
         
         # Create sample files automatically
-        print("🔄 Creating sample files for testing...")
+        print(" Creating sample files for testing...")
         sample_text = """Welcome to the live sports commentary
                             What an amazing goal by the team
                             The match is getting very exciting
@@ -354,17 +354,17 @@ def check_ott_readiness_menu():
         with open(os.path.join(external_data_dir, "sample_data.json"), "w", encoding="utf-8") as f:
             json.dump(sample_json, f, indent=2)
         
-        print("✅ Created sample files in external_data/")
+        print(" Created sample files in external_data/")
         files = [os.path.join(external_data_dir, f) for f in os.listdir(external_data_dir) 
                  if f.endswith(('.txt', '.json'))]
     
     if not files:
-        print("❌ Still no files available for analysis")
+        print(" Still no files available for analysis")
         return
 
     
 
-    print(f"📂 Found {len(files)} files. Analyzing translations and OTT metrics...\n")
+    print(f" Found {len(files)} files. Analyzing translations and OTT metrics...\n")
     all_results = []
 
     for file in files:
@@ -374,7 +374,7 @@ def check_ott_readiness_menu():
 
             translations_summary = []
             for i, line in enumerate(lines[:3]):  # Process first 3 lines only for demo
-                print(f"📝 Processing line {i+1}: {line[:50]}...")
+                print(f" Processing line {i+1}: {line[:50]}...")
                 translations, bleu_scores, latencies = translate_and_evaluate_parallel(line, 'en', ['hi', 'es', 'fr'])
                 translations_summary.append({
                     'translations': translations,
@@ -389,10 +389,10 @@ def check_ott_readiness_menu():
             all_results.extend(translations_summary)
             
         except Exception as e:
-            print(f"❌ Error processing file {file}: {e}")
+            print(f" Error processing file {file}: {e}")
 
     # Simple OTT readiness check
-    print("\n📊 OTT READINESS ANALYSIS")
+    print("\n OTT READINESS ANALYSIS")
     print("=" * 30)
     
     if all_results:
@@ -404,39 +404,39 @@ def check_ott_readiness_menu():
             avg_latency = 0
             avg_bleu = 0
         
-        print(f"📈 Total Translations: {total_translations}")
-        print(f"⚡ Average Latency: {avg_latency:.2f}s")
-        print(f"🎯 Average BLEU Score: {avg_bleu:.3f}")
+        print(f" Total Translations: {total_translations}")
+        print(f" Average Latency: {avg_latency:.2f}s")
+        print(f" Average BLEU Score: {avg_bleu:.3f}")
         
         # Basic readiness criteria
         readiness_score = 0
         if avg_latency < 2.0:
-            print("✅ Latency: Good for real-time (< 2s)")
+            print(" Latency: Good for real-time (< 2s)")
             readiness_score += 1
         else:
-            print("❌ Latency: Too slow for real-time")
+            print(" Latency: Too slow for real-time")
             
         if avg_bleu > 0.3:
-            print("✅ Translation Quality: Acceptable")
+            print(" Translation Quality: Acceptable")
             readiness_score += 1
         else:
-            print("❌ Translation Quality: Needs improvement")
+            print(" Translation Quality: Needs improvement")
             
         if total_translations >= 5:
-            print("✅ Data Volume: Sufficient")
+            print(" Data Volume: Sufficient")
             readiness_score += 1
         else:
-            print("❌ Data Volume: Insufficient")
+            print(" Data Volume: Insufficient")
             
-        print(f"\n🎯 Overall OTT Readiness: {readiness_score}/3")
+        print(f"\n Overall OTT Readiness: {readiness_score}/3")
         if readiness_score >= 2:
-            print("🚀 System is likely ready for OTT integration!")
+            print(" System is likely ready for OTT integration!")
         else:
-            print("⚠️ System needs improvement before OTT integration")
+            print(" System needs improvement before OTT integration")
     else:
-        print("❌ No results to analyze")
+        print(" No results to analyze")
     
-    print("✅ OTT readiness check completed!")
+    print(" OTT readiness check completed!")
 
 # ---------------------------
 # Session Manager
@@ -478,12 +478,12 @@ session_manager = SessionManager()
 # ---------------------------
 def speak_translations_async(translations, original_text=None, original_lang='en'):
     if not TTS_AVAILABLE or not tts_engine:
-        print("⚠️ TTS not available. Skipping speech output.")
+        print(" TTS not available. Skipping speech output.")
         return
     try:
         tts_engine.speak_all_translations_async(translations, original_text, original_lang)
     except Exception as e:
-        print(f"❌ Error in TTS: {e}")
+        print(f" Error in TTS: {e}")
 
 # ---------------------------
 # Audio / File Helpers
@@ -521,7 +521,7 @@ def extract_audio_from_mp4(mp4_path):
         from pydub import AudioSegment
         import tempfile
         
-        print(f"🎬 Extracting audio from MP4: {os.path.basename(mp4_path)}")
+        print(f" Extracting audio from MP4: {os.path.basename(mp4_path)}")
         
         # Create temporary output file
         temp_dir = tempfile.gettempdir()
@@ -531,14 +531,14 @@ def extract_audio_from_mp4(mp4_path):
         audio = AudioSegment.from_file(mp4_path, format="mp4")
         audio.export(output_path, format="wav")
         
-        print(f"✅ Audio extracted to: {output_path}")
+        print(f" Audio extracted to: {output_path}")
         return output_path
         
     except ImportError:
-        print("❌ pydub not installed. Install with: pip install pydub")
+        print(" pydub not installed. Install with: pip install pydub")
         return None
     except Exception as e:
-        print(f"❌ MP4 audio extraction error: {e}")
+        print(f" MP4 audio extraction error: {e}")
         return None
 
 # ---------------------------
@@ -548,9 +548,9 @@ try:
     from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
     smooth_fn = SmoothingFunction().method1
     NLTK_AVAILABLE = True
-    print("✅ NLTK: Available for BLEU scores")
+    print(" NLTK: Available for BLEU scores")
 except ImportError:
-    print("⚠️ NLTK not available, BLEU scores will be disabled")
+    print(" NLTK not available, BLEU scores will be disabled")
     NLTK_AVAILABLE = False
     smooth_fn = None
 
@@ -568,12 +568,12 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
     if not selected_langs:
         return translations, bleu_scores, latencies
 
-    print(f"🎯 Translating from {src_lang} to {len(selected_langs)} languages: {selected_langs}")
+    print(f" Translating from {src_lang} to {len(selected_langs)} languages: {selected_langs}")
 
     # Try batch translation first (more efficient)
     try:
         if hasattr(translator, 'batch_translate'):
-            print("🔄 Using batch translation...")
+            print(" Using batch translation...")
             start_time = time.time()
             batch_results = translator.batch_translate(text, src_lang, selected_langs)
             batch_latency = time.time() - start_time
@@ -585,7 +585,7 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
                 if lang in batch_results and batch_results[lang] and not batch_results[lang].startswith('[Error') and not batch_results[lang].startswith('[Skipped'):
                     translations[lang] = ensure_str_from_translation(batch_results[lang])
                     latencies[lang] = avg_latency
-                    print(f"✅ Batch translated to {lang_name(lang)}")
+                    print(f" Batch translated to {lang_name(lang)}")
             
             if translations:
                 # Calculate BLEU scores if NLTK available
@@ -607,14 +607,14 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
                     save_line_translation(text, src_lang, translations, 1, "auto")
                     session_manager.log_processing("Translation", True, len((text or "").split()), len(translations))
                 except Exception as e:
-                    print(f"⚠️ Failed to save translation: {e}")
+                    print(f" Failed to save translation: {e}")
                 
                 return translations, bleu_scores, latencies
     except Exception as e:
-        print(f"⚠️ Batch translation failed: {e}")
+        print(f" Batch translation failed: {e}")
 
     # Fallback to parallel translation with better timeout handling
-    print("🔄 Using parallel translation (fallback)...")
+    print(" Using parallel translation (fallback)...")
 
     def translate_one(tgt):
         """Translate to a single target language"""
@@ -624,7 +624,7 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
             latency = time.time() - start
             return tgt, translated, latency
         except Exception as e:
-            print(f"❌ Translation error for {tgt}: {e}")
+            print(f" Translation error for {tgt}: {e}")
             return tgt, None, 0.0
 
     # Use smaller number of workers to avoid overwhelming the system
@@ -649,21 +649,21 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
                         translations[tgt] = translated
                         latencies[tgt] = latency
                         completed += 1
-                        print(f"✅ Translated to {lang_name(tgt)} (latency: {latency:.2f}s)")
+                        print(f" Translated to {lang_name(tgt)} (latency: {latency:.2f}s)")
                     else:
-                        print(f"⚠️ No valid translation for {lang_name(tgt)}")
+                        print(f" No valid translation for {lang_name(tgt)}")
                 except FutureTimeoutError:
                     lang = future_to_lang[future]
-                    print(f"⏰ Timeout for {lang_name(lang)}")
+                    print(f" Timeout for {lang_name(lang)}")
                 except Exception as e:
                     lang = future_to_lang[future]
-                    print(f"❌ Error for {lang_name(lang)}: {e}")
+                    print(f" Error for {lang_name(lang)}: {e}")
                     
         except TimeoutError:
-            print(f"⏰ Overall translation timeout after {timeout_seconds * len(selected_langs)} seconds")
+            print(f" Overall translation timeout after {timeout_seconds * len(selected_langs)} seconds")
             # Continue with whatever translations we have
 
-    print(f"📊 Translation completed: {completed}/{len(selected_langs)} languages")
+    print(f" Translation completed: {completed}/{len(selected_langs)} languages")
 
     # Calculate BLEU scores for successful translations
     if translations:
@@ -685,7 +685,7 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
             save_line_translation(text, src_lang, translations, 1, "auto")
             session_manager.log_processing("Translation", True, len((text or "").split()), len(translations))
         except Exception as e:
-            print(f"⚠️ Failed to save translation: {e}")
+            print(f" Failed to save translation: {e}")
 
     return translations, bleu_scores, latencies
 
@@ -693,20 +693,20 @@ def translate_and_evaluate_parallel(text, src_lang, selected_langs=None):
 # Audio processing flows - ENHANCED WITH ERROR HANDLING
 # ---------------------------
 def process_audio_file(file_path):
-    print(f"🎯 Processing: {file_path}")
+    print(f" Processing: {file_path}")
     ok, msg = validate_audio_file(file_path)
     if not ok:
-        print(f"❌ {msg}")
+        print(f" {msg}")
         return
-    print(f"📦 {msg}")
+    print(f" {msg}")
 
     try:
         recognizer = EnhancedSpeechRecognizer()
         text, language = recognizer.recognize_from_audio_file(file_path)
         if not text:
-            print("❌ No speech detected")
+            print(" No speech detected")
             return
-        print(f"📝 Detected ({language}): {text[:200]}...")
+        print(f" Detected ({language}): {text[:200]}...")
 
         if input("Translate this audio? (y/n): ").strip().lower() != 'y':
             return
@@ -716,10 +716,10 @@ def process_audio_file(file_path):
 
         translations, bleu_scores, latencies = translate_and_evaluate_parallel(text, language, selected_langs)
         if not translations:
-            print("⚠️ No translations generated.")
+            print(" No translations generated.")
             return
 
-        print("🌍 Translations:")
+        print(" Translations:")
         for lang, t in translations.items():
             print(f"{lang_name(lang)} | BLEU: {bleu_scores.get(lang,0.0):.2f} | {t[:150]}...")
 
@@ -727,24 +727,24 @@ def process_audio_file(file_path):
         if TTS_AVAILABLE:
             tts_choice = input("Hear translations? (y/n): ").strip().lower()
             if tts_choice == 'y':
-                print("🔊 Playing translations...")
+                print(" Playing translations...")
                 speak_translations_async(translations, original_text=None, original_lang=language)
                 # Wait a moment for TTS to start
                 time.sleep(2)
         else:
-            print("⚠️ TTS not available for audio playback")
+            print(" TTS not available for audio playback")
     except Exception as e:
-        print(f"❌ Error processing audio file: {e}")
-        print("💡 Check if Azure Speech credentials are correct")
+        print(f" Error processing audio file: {e}")
+        print(" Check if Azure Speech credentials are correct")
 
 def handle_microphone_input():
     try:
         recognizer = EnhancedSpeechRecognizer()
         text, language = recognizer.recognize_from_microphone()
         if not text:
-            print("❌ No speech detected")
+            print(" No speech detected")
             return
-        print(f"📝 Detected ({language}): {text[:140]}...")
+        print(f" Detected ({language}): {text[:140]}...")
 
         if input("Translate detected text? (y/n): ").strip().lower() != 'y':
             return
@@ -755,52 +755,52 @@ def handle_microphone_input():
         try:
             translations, bleu_scores, latencies = translate_and_evaluate_parallel(text, language, selected_langs)
             if not translations:
-                print("⚠️ No translations generated.")
+                print(" No translations generated.")
                 return
 
                     # Auto-play translations without asking
             if TTS_AVAILABLE:
-                print("🔊 Playing translations automatically...")
+                print(" Playing translations automatically...")
                 speak_translations_async(translations, original_text=None, original_lang=language)
                 # Wait a moment for TTS to start
                 time.sleep(2)
             else:
-                print("⚠️ TTS not available for audio playback")
+                print(" TTS not available for audio playback")
             speak_translations_async(translations, text, language)
         except Exception as e:
-            print(f"❌ Translation process failed: {e}")
+            print(f" Translation process failed: {e}")
             
     except Exception as e:
-        print(f"❌ Microphone input failed: {e}")
-        print("💡 Check microphone permissions and Azure Speech configuration")
+        print(f" Microphone input failed: {e}")
+        print(" Check microphone permissions and Azure Speech configuration")
 
 # ---------------------------
 # CLI
 # ---------------------------
 def view_system_status():
     s = session_manager.get_session_summary()
-    print(f"\n📊 SYSTEM STATUS")
+    print(f"\n SYSTEM STATUS")
     print("=" * 30)
     print(f"Files processed: {s['total_files']}")
     print(f"Successful files: {s['successful_files']}")
     print(f"Translations made: {s['translations_count']}")
     print(f"Words processed: {s['translations_made']}")
     print(f"Success rate: {s['success_rate']:.1f}%")
-    print(f"TTS Available: {'✅ Yes' if TTS_AVAILABLE else '❌ No'}")
-    print(f"OTT Integration: {'✅ Available' if MILESTONE_3_AVAILABLE else '❌ Not available'}")
-    print(f"Translation Pipeline: {'✅ Available' if TRANSLATION_PIPELINE_AVAILABLE else '❌ Not available'}")
-    print(f"NLTK Available: {'✅ Yes' if NLTK_AVAILABLE else '❌ No'}")
+    print(f"TTS Available: {' Yes' if TTS_AVAILABLE else '❌ No'}")
+    print(f"OTT Integration: {' Available' if MILESTONE_3_AVAILABLE else '❌ Not available'}")
+    print(f"Translation Pipeline: {' Available' if TRANSLATION_PIPELINE_AVAILABLE else '❌ Not available'}")
+    print(f"NLTK Available: {' Yes' if NLTK_AVAILABLE else '❌ No'}")
     print("Supported languages:", ', '.join(SUPPORTED_LANG_CODES))
 
 def main():
-    print("\n🚀 AI-POWERED UNIVERSAL SPEECH TRANSLATION SYSTEM")
+    print("\n AI-POWERED UNIVERSAL SPEECH TRANSLATION SYSTEM")
     print("=" * 50)
     
     # Display system capabilities
-    print(f"✅ Translation: {len(SUPPORTED_LANG_CODES)} languages supported")
-    print(f"✅ Speech Recognition: English & Hindi")
-    print(f"{'✅' if TTS_AVAILABLE else '❌'} Text-to-Speech: {'Available' if TTS_AVAILABLE else 'Not available'}")
-    print(f"{'✅' if MILESTONE_3_AVAILABLE else '❌'} OTT Integration: {'Available' if MILESTONE_3_AVAILABLE else 'Not available'}")
+    print(f" Translation: {len(SUPPORTED_LANG_CODES)} languages supported")
+    print(f" Speech Recognition: English & Hindi")
+    #print(f"{ if TTS_AVAILABLE else } Text-to-Speech: {'Available' if TTS_AVAILABLE else 'Not available'}")
+    #print(f"{ if MILESTONE_3_AVAILABLE else } OTT Integration: {'Available' if MILESTONE_3_AVAILABLE else 'Not available'}")
     
     # Diagnostic menu option
     print("\n0. Run Diagnostics")
@@ -833,30 +833,30 @@ def main():
             process_audio_file(path)
         elif choice == '3':
             if not TRANSLATION_PIPELINE_AVAILABLE:
-                print("❌ Milestone 3 pipeline not available")
+                print(" Milestone 3 pipeline not available")
             else:
                 try:
                     report = pipeline.run_full_pipeline()
-                    print("✅ Pipeline finished")
+                    print(" Pipeline finished")
                     print(report)
                 except Exception as e:
-                    print(f"❌ Pipeline error: {e}")
+                    print(f" Pipeline error: {e}")
         elif choice == '4':
             view_system_status()
         elif choice == '5':
             check_ott_readiness_menu()
         elif choice == '6':
-            print("👋 Goodbye!")
+            print(" Goodbye!")
             break
         else:
-            print("❌ Invalid choice")
+            print(" Invalid choice")
         input("\nPress Enter to continue...")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n🛑 Interrupted. Exiting.")
+        print("\n Interrupted. Exiting.")
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f" Unexpected error: {e}")
         traceback.print_exc()

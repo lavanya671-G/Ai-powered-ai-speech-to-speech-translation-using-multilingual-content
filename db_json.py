@@ -5,7 +5,7 @@ import json
 import time
 from datetime import datetime
 
-# ----------------- Absolute Directories - USING YOUR EXISTING STRUCTURE -----------------
+#Absolute Directories
 
 # Get the current project directory
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -18,14 +18,14 @@ TRANSCRIPT_FILES = {
 ENGLISH_TRANSLATIONS_DIR = os.path.join(PROJECT_DIR, "results", "translations", "english_translations")
 HINDI_TRANSLATIONS_DIR = os.path.join(PROJECT_DIR, "results", "translations", "hindi_translations")
 
-print(f"🔍 DEBUG: Using RELATIVE transcription files:")
+print(f" DEBUG: Using RELATIVE transcription files:")
 print(f"  English: {TRANSCRIPT_FILES['en-US']}")
 print(f"  Hindi: {TRANSCRIPT_FILES['hi-IN']}")
-print(f"🔍 DEBUG: Using RELATIVE translation directories:")
+print(f" DEBUG: Using RELATIVE translation directories:")
 print(f"  English: {ENGLISH_TRANSLATIONS_DIR}")
 print(f"  Hindi: {HINDI_TRANSLATIONS_DIR}")
 
-# ----------------- JSON Helpers - ENHANCED FOR APPENDING -----------------
+#JSON Helpers - ENHANCED FOR APPENDING 
 def _load_json(path):
     """Load JSON data from file - PRESERVES EXISTING DATA"""
     if os.path.exists(path):
@@ -33,23 +33,23 @@ def _load_json(path):
             with open(path, "r", encoding="utf-8") as f:
                 content = f.read().strip()
                 if not content:
-                    print(f"📄 File is empty: {path}")
+                    print(f" File is empty: {path}")
                     return {}
                 data = json.loads(content)
                 # Ensure we always return a dict
                 if isinstance(data, list):
-                    print(f"🔄 Converting list to dict for: {path}")
+                    print(f" Converting list to dict for: {path}")
                     return {f"item_{i}": item for i, item in enumerate(data)}
-                print(f"📖 Loaded existing data from {path}: {len(data)} entries")
+                print(f" Loaded existing data from {path}: {len(data)} entries")
                 return data
         except json.JSONDecodeError as e:
-            print(f"⚠️  JSON decode error for {path}: {e}")
+            print(f"  JSON decode error for {path}: {e}")
             return {}
         except Exception as e:
-            print(f"⚠️  Error loading {path}: {e}")
+            print(f"  Error loading {path}: {e}")
             return {}
     else:
-        print(f"📄 Creating new file: {path}")
+        print(f" Creating new file: {path}")
         return {}
 
 def _save_json(path, data):
@@ -65,21 +65,21 @@ def _save_json(path, data):
         if os.path.exists(path):
             file_size = os.path.getsize(path)
             entries_count = len(data) if isinstance(data, dict) else 0
-            print(f"💾 Saved: {os.path.basename(path)} ({file_size} bytes, {entries_count} entries)")
+            print(f" Saved: {os.path.basename(path)} ({file_size} bytes, {entries_count} entries)")
             return True
         else:
-            print(f"❌ File was not created: {path}")
+            print(f" File was not created: {path}")
             return False
             
     except Exception as e:
-        print(f"❌ Error saving to {path}: {e}")
+        print(f" Error saving to {path}: {e}")
         return False
 
-# ----------------- UNIFIED TRANSCRIPT SAVING - ALL SOURCES USE SAME FILES -----------------
+# UNIFIED TRANSCRIPT SAVING
 def save_line_transcript(original_text, detected_language, line_num, source_type="microphone"):
     """Save individual line - APPENDS TO EXISTING DATA for ALL sources"""
     try:
-        print(f"\n📝 SAVING TRANSCRIPT - Line {line_num} [{source_type.upper()}]")
+        print(f"\n SAVING TRANSCRIPT - Line {line_num} [{source_type.upper()}]")
         print(f"   Language: {detected_language}")
         print(f"   Text: {original_text[:80]}{'...' if len(original_text) > 80 else ''}")
         
@@ -91,16 +91,16 @@ def save_line_transcript(original_text, detected_language, line_num, source_type
             transcript_file = TRANSCRIPT_FILES["en-US"]
             lang_name = "English"
         
-        print(f"   📁 Using EXISTING {lang_name} file")
+        print(f"    Using EXISTING {lang_name} file")
         
         # Load EXISTING data
         data = _load_json(transcript_file)
         if not isinstance(data, dict):
-            print(f"   ⚠️  Initializing new dict for existing file")
+            print(f"    Initializing new dict for existing file")
             data = {}
         
         previous_count = len(data)
-        print(f"   📊 Existing entries: {previous_count}")
+        print(f"    Existing entries: {previous_count}")
         
         # Create unique line ID to avoid overwrites
         timestamp = int(time.time())
@@ -116,27 +116,27 @@ def save_line_transcript(original_text, detected_language, line_num, source_type
             "source_type": source_type
         }
         
-        print(f"   ➕ Added to existing data: {line_id}")
+        print(f"    Added to existing data: {line_id}")
         
         # Save back to EXISTING file
         if _save_json(transcript_file, data):
             new_count = len(data)
-            print(f"   ✅ SUCCESS: Added to {lang_name} transcripts")
-            print(f"   📈 Entries: {previous_count} → {new_count}")
+            print(f"    SUCCESS: Added to {lang_name} transcripts")
+            print(f"    Entries: {previous_count} → {new_count}")
             return True
         else:
-            print(f"   ❌ FAILED: Could not save to existing file")
+            print(f"    FAILED: Could not save to existing file")
             return False
         
     except Exception as e:
-        print(f"   ❌ ERROR saving transcript: {e}")
+        print(f"    ERROR saving transcript: {e}")
         return False
 
 def save_final_transcript(lines, detected_language, source_type="audio_file"):
     """Save final complete transcript - APPENDS TO EXISTING for ALL sources"""
     try:
         complete_text = " ".join(lines)
-        print(f"\n💾 SAVING FINAL TRANSCRIPT [{source_type.upper()}]")
+        print(f"\n SAVING FINAL TRANSCRIPT [{source_type.upper()}]")
         print(f"   Total lines: {len(lines)}")
         print(f"   Detected language: {detected_language}")
         
@@ -148,11 +148,11 @@ def save_final_transcript(lines, detected_language, source_type="audio_file"):
             transcript_file = TRANSCRIPT_FILES["en-US"]
             lang_name = "English"
         
-        print(f"   📁 Using {lang_name} file: {transcript_file}")
+        print(f"    Using {lang_name} file: {transcript_file}")
         
         # Load existing data
         data = _load_json(transcript_file)
-        print(f"   📊 Current file has {len(data)} entries")
+        print(f"    Current file has {len(data)} entries")
         
         # Add complete transcript entry
         timestamp = int(time.time())
@@ -168,26 +168,26 @@ def save_final_transcript(lines, detected_language, source_type="audio_file"):
             "is_complete": True
         }
         
-        print(f"   ➕ Added complete transcript entry")
+        print(f"    Added complete transcript entry")
         
         # Save back
         if _save_json(transcript_file, data):
             # Verify file was written
             if os.path.exists(transcript_file):
                 file_size = os.path.getsize(transcript_file)
-                print(f"   ✅ SUCCESS: Complete transcript saved!")
-                print(f"   📁 File: {os.path.basename(transcript_file)}")
-                print(f"   📏 Size: {file_size} bytes")
+                print(f"    SUCCESS: Complete transcript saved!")
+                print(f"    File: {os.path.basename(transcript_file)}")
+                print(f"    Size: {file_size} bytes")
                 return complete_text
             else:
-                print(f"   ❌ FAILED: File was not created")
+                print(f"    FAILED: File was not created")
                 return None
         else:
-            print(f"   ❌ FAILED: Could not save complete transcript")
+            print(f"    FAILED: Could not save complete transcript")
             return None
             
     except Exception as e:
-        print(f"   ❌ ERROR saving final transcript: {e}")
+        print(f"    ERROR saving final transcript: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -196,7 +196,7 @@ def save_final_transcript(lines, detected_language, source_type="audio_file"):
 def save_translation(original_text, translated_text, source_lang, target_lang, source_type="microphone", line_num=1):
     """Save translation - APPENDS TO EXISTING FILES for ALL sources"""
     try:
-        print(f"\n🌐 SAVING TRANSLATION [{source_type.upper()}] - Line {line_num}")
+        print(f"\n SAVING TRANSLATION [{source_type.upper()}] - Line {line_num}")
         print(f"   Source: {source_lang} → Target: {target_lang}")
         print(f"   Original: {original_text[:60]}...")
         print(f"   Translated: {translated_text[:60]}...")
@@ -209,7 +209,7 @@ def save_translation(original_text, translated_text, source_lang, target_lang, s
             translation_dir = ENGLISH_TRANSLATIONS_DIR
             source_name = "English"
         
-        print(f"   📁 Using EXISTING {source_name} translation directory")
+        print(f"    Using EXISTING {source_name} translation directory")
         
         # Use EXISTING translation file
         translation_file = os.path.join(translation_dir, f"{target_lang}_translations.json")
@@ -217,7 +217,7 @@ def save_translation(original_text, translated_text, source_lang, target_lang, s
         # Load EXISTING translations
         all_translations = _load_json(translation_file)
         if not isinstance(all_translations, dict):
-            print(f"   ⚠️  Initializing dict for existing file")
+            print(f"     Initializing dict for existing file")
             all_translations = {}
         
         previous_entries = len(all_translations)
@@ -239,25 +239,25 @@ def save_translation(original_text, translated_text, source_lang, target_lang, s
             'translation_id': translation_id
         }
         
-        print(f"   ➕ Adding translation to {target_lang} file")
+        print(f"   Adding translation to {target_lang} file")
         
         # Save back to EXISTING file
         if _save_json(translation_file, all_translations):
             new_entries = len(all_translations)
-            print(f"   ✅ {target_lang.upper()}: {previous_entries} → {new_entries} entries")
+            print(f"    {target_lang.upper()}: {previous_entries} → {new_entries} entries")
             return True
         else:
-            print(f"   ❌ Failed to save {target_lang} translation")
+            print(f"    Failed to save {target_lang} translation")
             return False
         
     except Exception as e:
-        print(f"   ❌ Error saving translation: {e}")
+        print(f"    Error saving translation: {e}")
         return False
 
 def save_line_translation(original_text, source_lang, translations, line_num, source_type="microphone"):
     """Save multiple translations - APPENDS TO EXISTING FILES for ALL sources"""
     try:
-        print(f"\n🌐 SAVING TRANSLATIONS [{source_type.upper()}] - Line {line_num}")
+        print(f"\n SAVING TRANSLATIONS [{source_type.upper()}] - Line {line_num}")
         print(f"   Source: {source_lang}")
         print(f"   Translating to: {list(translations.keys())}")
         
@@ -269,7 +269,7 @@ def save_line_translation(original_text, source_lang, translations, line_num, so
             translation_dir = ENGLISH_TRANSLATIONS_DIR
             source_name = "English"
         
-        print(f"   📁 Using EXISTING {source_name} translation directory")
+        print(f"    Using EXISTING {source_name} translation directory")
         
         # Save to EXISTING language files
         saved_count = 0
@@ -288,17 +288,17 @@ def save_line_translation(original_text, source_lang, translations, line_num, so
                 if success:
                     saved_count += 1
                 else:
-                    print(f"      ❌ Failed to save {target_lang} translation")
+                    print(f"       Failed to save {target_lang} translation")
                     
             except Exception as e:
-                print(f"      ❌ Error saving {target_lang}: {e}")
+                print(f"       Error saving {target_lang}: {e}")
                 continue
         
-        print(f"   ✅ Line {line_num}: {saved_count}/{len(translations)} translations saved")
+        print(f"    Line {line_num}: {saved_count}/{len(translations)} translations saved")
         return saved_count > 0
         
     except Exception as e:
-        print(f"   ❌ Error saving translations: {e}")
+        print(f"    Error saving translations: {e}")
         return False
 
 # ----------------- BACKWARD COMPATIBILITY FUNCTIONS -----------------
@@ -378,27 +378,27 @@ def get_source_statistics():
 def check_transcription_files():
     """Debug function to check if transcription files are being updated"""
     print("\n" + "="*60)
-    print("🔍 CHECKING TRANSCRIPTION FILES - DETAILED DEBUG")
+    print(" CHECKING TRANSCRIPTION FILES - DETAILED DEBUG")
     print("="*60)
     
     for lang, file_path in TRANSCRIPT_FILES.items():
         lang_name = "Hindi" if "hindi" in file_path.lower() else "English"
-        print(f"\n📄 {lang_name} Transcript File:")
+        print(f"\n {lang_name} Transcript File:")
         print(f"   Path: {file_path}")
         
         if os.path.exists(file_path):
             file_size = os.path.getsize(file_path)
-            print(f"   ✅ File exists: {file_size} bytes")
+            print(f"    File exists: {file_size} bytes")
             
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                    print(f"   📖 File content length: {len(content)} characters")
+                    print(f"    File content length: {len(content)} characters")
                     
                 data = _load_json(file_path)
                 if isinstance(data, dict):
                     line_count = len(data)
-                    print(f"   📊 Total entries: {line_count}")
+                    print(f"    Total entries: {line_count}")
                     
                     # Show source statistics
                     source_counts = {}
@@ -407,13 +407,13 @@ def check_transcription_files():
                         source_counts[source_type] = source_counts.get(source_type, 0) + 1
                     
                     if source_counts:
-                        print(f"   📈 Source distribution:")
+                        print(f"    Source distribution:")
                         for source, count in source_counts.items():
                             print(f"      - {source}: {count} entries")
                     
                     # Show recent entries
                     if data:
-                        print(f"   📋 Recent entries:")
+                        print(f"    Recent entries:")
                         keys = list(data.keys())[-3:]  # Last 3 entries
                         for key in keys:
                             value = data[key]
@@ -421,18 +421,18 @@ def check_transcription_files():
                             source_type = value.get('source_type', 'unknown')
                             print(f"     - {key} [{source_type}]: {text_preview}")
                     else:
-                        print(f"   📭 File is empty")
+                        print(f"    File is empty")
                 else:
-                    print(f"   ⚠️  File content is not a dictionary: {type(data)}")
+                    print(f"     File content is not a dictionary: {type(data)}")
                     
             except Exception as e:
-                print(f"   ❌ Error reading file: {e}")
+                print(f"    Error reading file: {e}")
         else:
-            print(f"   ❌ File does not exist!")
+            print(f"    File does not exist!")
     
     # Also check translation directories
     print("\n" + "="*60)
-    print("🔍 CHECKING TRANSLATION DIRECTORIES")
+    print(" CHECKING TRANSLATION DIRECTORIES")
     print("="*60)
     
     translation_dirs = [
@@ -441,12 +441,12 @@ def check_transcription_files():
     ]
     
     for dir_path, dir_name in translation_dirs:
-        print(f"\n📁 {dir_name}:")
+        print(f"\n {dir_name}:")
         print(f"   Path: {dir_path}")
         
         if os.path.exists(dir_path):
             files = [f for f in os.listdir(dir_path) if f.endswith('.json')]
-            print(f"   ✅ Directory exists: {len(files)} translation files")
+            print(f"    Directory exists: {len(files)} translation files")
             
             for file in files:
                 file_path = os.path.join(dir_path, file)
@@ -462,20 +462,20 @@ def check_transcription_files():
                             source_type = entry.get('source_type', 'unknown')
                             source_counts[source_type] = source_counts.get(source_type, 0) + 1
                     
-                    print(f"   📄 {file}: {file_size} bytes, {entry_count} entries")
+                    print(f"    {file}: {file_size} bytes, {entry_count} entries")
                     if source_counts:
                         sources_str = ", ".join([f"{k}:{v}" for k, v in source_counts.items()])
-                        print(f"        📊 Sources: {sources_str}")
+                        print(f"         Sources: {sources_str}")
                 except:
-                    print(f"   📄 {file}: {file_size} bytes")
+                    print(f"    {file}: {file_size} bytes")
         else:
-            print(f"   ❌ Directory does not exist!")
+            print(f"    Directory does not exist!")
 
 # ----------------- ENHANCED DEBUG FUNCTION -----------------
 def check_all_existing_files():
     """Check ALL existing files in your structure"""
     print("\n" + "="*80)
-    print("🔍 CHECKING ALL EXISTING FILES IN YOUR STRUCTURE")
+    print(" CHECKING ALL EXISTING FILES IN YOUR STRUCTURE")
     print("="*80)
     
     # Check all directories that should exist
@@ -486,12 +486,12 @@ def check_all_existing_files():
     ]
     
     for dir_name, dir_path in directories_to_check:
-        print(f"\n📁 {dir_name}:")
+        print(f"\n {dir_name}:")
         print(f"   Path: {dir_path}")
         
         if os.path.exists(dir_path):
             files = [f for f in os.listdir(dir_path) if f.endswith('.json')]
-            print(f"   ✅ Directory exists: {len(files)} files")
+            print(f"    Directory exists: {len(files)} files")
             
             for file in sorted(files):
                 file_path = os.path.join(dir_path, file)
@@ -506,10 +506,10 @@ def check_all_existing_files():
                         source_type = entry.get('source_type', 'unknown')
                         source_counts[source_type] = source_counts.get(source_type, 0) + 1
                 
-                print(f"   📄 {file}: {file_size:6} bytes, {entries:3} entries")
+                print(f"    {file}: {file_size:6} bytes, {entries:3} entries")
                 if source_counts:
                     sources_str = ", ".join([f"{k}:{v}" for k, v in source_counts.items()])
-                    print(f"        📊 Sources: {sources_str}")
+                    print(f"         Sources: {sources_str}")
                     
                 # Show sample of recent entries
                 if entries > 0:
@@ -518,9 +518,9 @@ def check_all_existing_files():
                         if 'text' in data[key]:
                             text = data[key]['text'][:50] + "..." if len(data[key]['text']) > 50 else data[key]['text']
                             source_type = data[key].get('source_type', 'unknown')
-                            print(f"        📝 {key} [{source_type}]: {text}")
+                            print(f"         {key} [{source_type}]: {text}")
         else:
-            print(f"   ❌ Directory missing!")
+            print(f"    Directory missing!")
 
 # ----------------- UTILITY FUNCTIONS -----------------
 def get_recent_transcriptions(limit=10, source_type=None):
@@ -562,10 +562,10 @@ def get_recent_translations(limit=10, source_type=None):
                 file_path = os.path.join(source_dir, file)
                 data = _load_json(file_path)
                 if data and isinstance(data, dict):
-                    # Convert to list and filter
+                    
                     entries = list(data.values())
                     
-                    # Filter by source type if specified
+                    
                     if source_type:
                         entries = [e for e in entries if e.get('source_type') == source_type]
                     
@@ -576,11 +576,11 @@ def get_recent_translations(limit=10, source_type=None):
     
     return recent_translations[:limit]
 
-# ----------------- TEST WITH EXISTING FILES -----------------
+# TEST WITH EXISTING FILES
 def test_with_existing_files():
     """Test that we're properly using existing files"""
     print("\n" + "="*80)
-    print("🧪 TESTING WITH EXISTING FILES")
+    print(" TESTING WITH EXISTING FILES")
     print("="*80)
     
     # First, show current state
@@ -590,7 +590,7 @@ def test_with_existing_files():
     test_text = "This is a test to verify we append to existing files with proper source types"
     test_translations = {'hi': 'यह एक परीक्षण है', 'es': 'Esta es una prueba'}
     
-    print(f"\n➕ ADDING TEST DATA TO EXISTING FILES:")
+    print(f"\n ADDING TEST DATA TO EXISTING FILES:")
     
     # Add transcripts with different source types
     source_types = ["youtube", "microphone", "audio_file", "online_audio"]
@@ -610,18 +610,18 @@ def test_with_existing_files():
         )
     
     # Show final state
-    print(f"\n📊 FINAL STATE AFTER ADDING TEST DATA:")
+    print(f"\n FINAL STATE AFTER ADDING TEST DATA:")
     check_all_existing_files()
     
     # Show source statistics
     source_stats = get_source_statistics()
-    print(f"\n📈 SOURCE STATISTICS:")
+    print(f"\n SOURCE STATISTICS:")
     for source_type, count in source_stats.items():
         print(f"   {source_type}: {count} entries")
     
     return True
 
-# Run the test when file is executed directly
+
 if __name__ == "__main__":
-    print("🚀 TESTING UNIFIED FILE STRUCTURE...")
+    print(" TESTING UNIFIED FILE STRUCTURE...")
     test_with_existing_files()

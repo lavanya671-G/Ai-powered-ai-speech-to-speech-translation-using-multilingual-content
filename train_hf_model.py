@@ -1,9 +1,5 @@
 # train_hf_model.py
 
-"""
-ENHANCED MODEL TRAINER
-Step 5: Train model with JSON data + external datasets
-"""
 
 import os
 import json
@@ -23,14 +19,14 @@ class EnhancedModelTrainer:
     
     def import_kaggle_datasets(self):
         """Step 5A: Import datasets from Kaggle or other sources"""
-        print("\n🌐 IMPORTING EXTERNAL DATASETS")
+        print("\n IMPORTING EXTERNAL DATASETS")
         print("=" * 40)
         
         external_pairs = []
         
         # Method 1: Use Hugging Face datasets
         try:
-            print("📥 Loading from Hugging Face datasets...")
+            print(" Loading from Hugging Face datasets...")
             
             # Try to load a small parallel dataset
             try:
@@ -42,12 +38,12 @@ class EnhancedModelTrainer:
                         'hi': item['hi'],
                         'source': 'iitb_english_hindi'
                     })
-                print(f"✅ Loaded {len(dataset)} samples from IITB English-Hindi")
+                print(f" Loaded {len(dataset)} samples from IITB English-Hindi")
             except:
-                print("❌ IITB dataset not available")
+                print(" IITB dataset not available")
             
         except Exception as e:
-            print(f"❌ Hugging Face datasets error: {e}")
+            print(f" Hugging Face datasets error: {e}")
         
         # Method 2: Create synthetic sports commentary data
         sports_data = [
@@ -89,19 +85,19 @@ class EnhancedModelTrainer:
         ]
         
         external_pairs.extend(sports_data)
-        print(f"✅ Added {len(sports_data)} synthetic sports commentary samples")
+        print(f" Added {len(sports_data)} synthetic sports commentary samples")
         
         # Save external data
         external_file = os.path.join(self.external_data_dir, "external_training_data.json")
         with open(external_file, 'w', encoding='utf-8') as f:
             json.dump(external_pairs, f, ensure_ascii=False, indent=2)
         
-        print(f"📊 Total external samples: {len(external_pairs)}")
+        print(f" Total external samples: {len(external_pairs)}")
         return external_pairs
     
     def combine_all_training_data(self, json_pairs, external_pairs):
         """Combine JSON data with external datasets"""
-        print("\n🔄 COMBINING ALL TRAINING DATA")
+        print("\n COMBINING ALL TRAINING DATA")
         print("=" * 40)
         
         all_pairs = []
@@ -124,7 +120,7 @@ class EnhancedModelTrainer:
                     'source': pair.get('source', 'external_data')
                 })
         
-        print(f"📊 Combined training data:")
+        print(f" Combined training data:")
         print(f"   - Your JSON data: {len(json_pairs)} pairs")
         print(f"   - External data: {len(external_pairs)} pairs")
         print(f"   - Total: {len(all_pairs)} pairs")
@@ -145,14 +141,14 @@ class EnhancedModelTrainer:
     
     def fine_tune_translation_model(self, training_pairs, model_name="Helsinki-NLP/opus-mt-en-hi"):
         """Step 5B: Fine-tune translation model with combined data"""
-        print(f"\n🎯 FINE-TUNING MODEL: {model_name}")
+        print(f"\n FINE-TUNING MODEL: {model_name}")
         print("=" * 50)
         
         if len(training_pairs) < 20:
-            print(f"❌ Not enough training data. Have {len(training_pairs)} pairs, need at least 20.")
+            print(f" Not enough training data. Have {len(training_pairs)} pairs, need at least 20.")
             return None
         
-        print(f"📊 Training with {len(training_pairs)} samples")
+        print(f" Training with {len(training_pairs)} samples")
         
         try:
             # Load tokenizer and model
@@ -250,27 +246,27 @@ class EnhancedModelTrainer:
             metrics = train_result.metrics
             trainer.save_metrics("train", metrics)
             
-            print(f"✅ Training completed in {training_time:.2f} seconds")
-            print(f"📈 Training loss: {metrics.get('train_loss', 'N/A')}")
-            print(f"📊 Evaluation loss: {metrics.get('eval_loss', 'N/A')}")
+            print(f" Training completed in {training_time:.2f} seconds")
+            print(f" Training loss: {metrics.get('train_loss', 'N/A')}")
+            print(f" Evaluation loss: {metrics.get('eval_loss', 'N/A')}")
             
             # Save the fine-tuned model
             model_save_path = os.path.join(self.models_dir, "fine_tuned_en_hi")
             trainer.save_model(model_save_path)
             tokenizer.save_pretrained(model_save_path)
             
-            print(f"💾 Model saved to: {model_save_path}")
+            print(f" Model saved to: {model_save_path}")
             return model_save_path
             
         except Exception as e:
-            print(f"❌ Training failed: {e}")
+            print(f" Training failed: {e}")
             import traceback
             traceback.print_exc()
             return None
     
     def train_if_necessary(self, json_training_pairs, min_samples=20):
         """Decide if training is necessary and train if needed"""
-        print("\n🤔 CHECKING IF MODEL TRAINING IS NECESSARY")
+        print("\n CHECKING IF MODEL TRAINING IS NECESSARY")
         print("=" * 50)
         
         # Import external data
@@ -280,9 +276,9 @@ class EnhancedModelTrainer:
         all_pairs = self.combine_all_training_data(json_training_pairs, external_pairs)
         
         if len(all_pairs) >= min_samples:
-            print(f"✅ Sufficient data available ({len(all_pairs)} pairs). Starting training...")
+            print(f" Sufficient data available ({len(all_pairs)} pairs). Starting training...")
             return self.fine_tune_translation_model(all_pairs)
         else:
-            print(f"❌ Insufficient data. Have {len(all_pairs)} pairs, need {min_samples}.")
-            print("💡 Using pre-trained models without fine-tuning.")
+            print(f" Insufficient data. Have {len(all_pairs)} pairs, need {min_samples}.")
+            print(" Using pre-trained models without fine-tuning.")
             return None

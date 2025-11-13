@@ -1,12 +1,5 @@
 #translation_pipeline.py
 
-"""
-FIXED MILESTONE 2 PIPELINE - ENHANCED VERSION
-- Complete 12 language support
-- Better FFmpeg path handling
-- Enhanced error handling
-- All your required languages included
-"""
 
 import os
 import json
@@ -17,9 +10,9 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 
-# -----------------------------
+
 # PYDUB + FFMPEG CONFIGURATION - IMPROVED
-# -----------------------------
+
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Better FFmpeg path detection
@@ -45,20 +38,20 @@ def setup_ffmpeg():
             if "ffmpeg" in path.lower() and not ffmpeg_found:
                 AudioSegment.converter = path
                 ffmpeg_found = True
-                print(f"✅ Found FFmpeg: {path}")
+                print(f" Found FFmpeg: {path}")
             elif "ffprobe" in path.lower() and not ffprobe_found:
-                # Note: pydub uses converter for both, but we'll set probe separately if needed
+               
                 ffprobe_found = True
-                print(f"✅ Found FFprobe: {path}")
+                print(f" Found FFprobe: {path}")
     
     if not ffmpeg_found:
         # Fallback to system PATH
         system_ffmpeg = shutil.which("ffmpeg")
         if system_ffmpeg:
             AudioSegment.converter = system_ffmpeg
-            print(f"✅ Using system FFmpeg: {system_ffmpeg}")
+            print(f" Using system FFmpeg: {system_ffmpeg}")
         else:
-            print("⚠️ FFmpeg not found - audio processing may be limited")
+            print(" FFmpeg not found - audio processing may be limited")
     
     return ffmpeg_found
 
@@ -72,7 +65,7 @@ try:
     smooth_fn = SmoothingFunction().method1
     NLTK_AVAILABLE = True
 except ImportError:
-    print("⚠️ NLTK not available - BLEU scores disabled")
+    print(" NLTK not available - BLEU scores disabled")
     smooth_fn = None
     NLTK_AVAILABLE = False
 
@@ -80,9 +73,9 @@ try:
     from data_preprocessor import DataPreprocessor
     from model_evaluator import ModelEvaluator
     from translator import EnhancedTranslator as Translator
-    print("✅ Core modules imported successfully")
+    print(" Core modules imported successfully")
 except ImportError as e:
-    print(f"❌ Failed to import core modules: {e}")
+    print(f" Failed to import core modules: {e}")
     # Create fallback classes to prevent crashes
     class DataPreprocessor:
         def prepare_training_data(self): return []
@@ -100,7 +93,7 @@ except ImportError as e:
 try:
     from utils_shared import SUPPORTED_LANG_CODES, ensure_str_from_translation, translate_text_single
 except ImportError:
-    print("⚠️ utils_shared not available - using fallbacks")
+    print(" utils_shared not available - using fallbacks")
     SUPPORTED_LANG_CODES = ['en', 'hi', 'es', 'fr', 'de', 'it', 'ru', 'ar', 'zh', 'nl', 'pt', 'ja', 'ko']
     
     def ensure_str_from_translation(text):
@@ -109,9 +102,8 @@ except ImportError:
     def translate_text_single(text, src_lang, target_lang):
         return f"[Fallback translation: {text}]"
 
-# -----------------------------
-# TRANSLATION PIPELINE CLASS - FIXED
-# -----------------------------
+
+#TRANSLATION PIPELINE CLASS - FIXED
 class TranslationPipeline:
     """Translation pipeline that uses a single multilingual translator backend.
 
@@ -141,24 +133,24 @@ class TranslationPipeline:
             "ko": "Korean"
         }
 
-        print("✅ Translation Pipeline initialized")
-        print(f"🌍 Supporting {len(self.languages)} languages: {', '.join(self.languages.values())}")
+        print(" Translation Pipeline initialized")
+        print(f" Supporting {len(self.languages)} languages: {', '.join(self.languages.values())}")
 
-    # -----------------------------
+    
     # Translate text to all languages in parallel - IMPROVED
-    # -----------------------------
+    
     def translate_text_to_all_languages_parallel(self, original_text, source_lang="en", max_workers: int = 6):
         """Translate text to all supported languages in parallel"""
         if not original_text or not str(original_text).strip():
-            print("⚠️ No text to translate")
+            print(" No text to translate")
             return {}, {}, {}
 
         clean_text = re.sub(r"\s+", " ", str(original_text)).strip()
         if not clean_text:
             return {}, {}, {}
 
-        print(f"🎯 Translating: '{clean_text[:80]}...' from {source_lang}")
-        print(f"🌍 Target languages: {len(self.languages) - 1} languages")
+        print(f" Translating: '{clean_text[:80]}...' from {source_lang}")
+        print(f" Target languages: {len(self.languages) - 1} languages")
 
         results = {}
         latencies = {}
@@ -178,26 +170,26 @@ class TranslationPipeline:
                 latency = time.time() - start_time
                 
                 if translated_str and not translated_str.startswith('[Error'):
-                    print(f"✅ {tgt_name}: {translated_str[:50]}... (latency: {latency:.2f}s)")
+                    print(f" {tgt_name}: {translated_str[:50]}... (latency: {latency:.2f}s)")
                     return tgt_code, tgt_name, translated_str, latency
                 else:
-                    print(f"⚠️ {tgt_name}: Translation failed or empty")
+                    print(f" {tgt_name}: Translation failed or empty")
                     return tgt_code, tgt_name, "", latency
                     
             except Exception as e:
                 latency = time.time() - start_time
-                print(f"❌ {tgt_name}: Translation error - {e}")
+                print(f" {tgt_name}: Translation error - {e}")
                 return tgt_code, tgt_name, "", latency
 
         # Translate to all languages except source
         target_languages = [(code, name) for code, name in self.languages.items() if code != source_lang]
         
         if not target_languages:
-            print("⚠️ No target languages available (only source language)")
+            print(" No target languages available (only source language)")
             return {}, {}, {}
 
         workers = min(len(target_languages), max_workers)
-        print(f"🔄 Using {workers} parallel workers")
+        print(f" Using {workers} parallel workers")
 
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = {
@@ -213,7 +205,7 @@ class TranslationPipeline:
                         latencies[code] = latency
                 except Exception as e:
                     code, name = futures[future]
-                    print(f"⏰ Timeout/error for {name}: {e}")
+                    print(f" Timeout/error for {name}: {e}")
 
         # Calculate BLEU scores if NLTK available
         if NLTK_AVAILABLE and results:
@@ -231,7 +223,7 @@ class TranslationPipeline:
             for tgt_code in results:
                 bleu_scores[tgt_code] = 0.5
 
-        print(f"📊 Translation completed: {len(results)}/{len(target_languages)} successful")
+        print(f" Translation completed: {len(results)}/{len(target_languages)} successful")
         return results, bleu_scores, latencies
 
     # -----------------------------
@@ -240,17 +232,17 @@ class TranslationPipeline:
     def run_full_pipeline(self):
         """Run the complete translation pipeline evaluation"""
         print("\n" + "="*60)
-        print("🚀 MILESTONE 2: PRODUCTION-READY TRANSLATION PIPELINE")
+        print(" MILESTONE 2: PRODUCTION-READY TRANSLATION PIPELINE")
         print("="*60)
 
         # Step 1: System status
-        print(f"✅ System Status:")
+        print(f" System Status:")
         print(f"   - Languages: {len(self.languages)} supported")
         print(f"   - FFmpeg: {'Available' if ffmpeg_available else 'Limited'}")
         print(f"   - NLTK: {'Available' if NLTK_AVAILABLE else 'Not available'}")
 
         # Step 2: Test translation with sample text
-        print(f"\n🎯 Testing translation system...")
+        print(f"\n Testing translation system...")
         test_text = "Hello, welcome to the universal translation system"
         
         translations, bleu_scores, latencies = self.translate_text_to_all_languages_parallel(
@@ -262,18 +254,18 @@ class TranslationPipeline:
             avg_latency = sum(latencies.values()) / len(latencies) if latencies else 0
             avg_bleu = sum(bleu_scores.values()) / len(bleu_scores) if bleu_scores else 0
             
-            print(f"\n📊 Performance Summary:")
+            print(f"\n Performance Summary:")
             print(f"   - Successful translations: {len(translations)}")
             print(f"   - Average latency: {avg_latency:.2f}s")
             print(f"   - Average BLEU score: {avg_bleu:.3f}")
             
             # Show sample translations
-            print(f"\n🔍 Sample Translations:")
+            print(f"\n Sample Translations:")
             for i, (lang, text) in enumerate(list(translations.items())[:3]):
                 lang_name = self.languages.get(lang, lang)
                 print(f"   {lang_name}: {text[:60]}...")
         else:
-            print("❌ No translations generated - system may need configuration")
+            print(" No translations generated - system may need configuration")
             avg_latency = 0
             avg_bleu = 0
 
@@ -285,9 +277,8 @@ class TranslationPipeline:
         
         return report
 
-    # -----------------------------
     # OTT readiness check - IMPROVED
-    # -----------------------------
+    
     def _check_ott_readiness(self, successful_translations, avg_latency, avg_bleu):
         """Check if system is ready for OTT integration"""
         checks = {
@@ -299,12 +290,12 @@ class TranslationPipeline:
             "Basic Reliability": successful_translations > 0
         }
 
-        print("\n📋 OTT READINESS CHECKLIST:")
+        print("\n OTT READINESS CHECKLIST:")
         print("=" * 35)
         
         passed = 0
         for check, result in checks.items():
-            status = "✅ PASS" if result else "❌ FAIL"
+            status = " PASS" if result else " FAIL"
             print(f"   {status}: {check}")
             if result:
                 passed += 1
@@ -312,20 +303,20 @@ class TranslationPipeline:
         readiness_score = passed / len(checks)
         readiness_percent = readiness_score * 100
         
-        print(f"\n🎯 OTT READINESS: {readiness_percent:.0f}% ({passed}/{len(checks)} requirements)")
+        print(f"\n OTT READINESS: {readiness_percent:.0f}% ({passed}/{len(checks)} requirements)")
         
         if readiness_percent >= 80:
-            print("🚀 EXCELLENT: Ready for OTT integration!")
+            print(" EXCELLENT: Ready for OTT integration!")
         elif readiness_percent >= 60:
-            print("✅ GOOD: Mostly ready for OTT integration")
+            print(" GOOD: Mostly ready for OTT integration")
         else:
-            print("⚠️ NEEDS IMPROVEMENT: Not yet ready for OTT")
+            print(" NEEDS IMPROVEMENT: Not yet ready for OTT")
             
         return readiness_score
 
-    # -----------------------------
+    
     # Generate & save production report - IMPROVED
-    # -----------------------------
+    
     def _generate_production_report(self, successful_translations, avg_latency, avg_bleu, readiness):
         """Generate comprehensive production report"""
         report = {
@@ -355,15 +346,15 @@ class TranslationPipeline:
             report_file = "results/evaluation_results/production_report.json"
             with open(report_file, 'w', encoding='utf-8') as f:
                 json.dump(report, f, indent=2, ensure_ascii=False)
-            print(f"💾 Production report saved: {report_file}")
+            print(f" Production report saved: {report_file}")
         except Exception as e:
-            print(f"❌ Error saving report: {e}")
+            print(f" Error saving report: {e}")
 
         return report
 
-    # -----------------------------
+  
     # Real-time translation (batch) - IMPROVED
-    # -----------------------------
+  
     def real_time_translate(self, text, source_lang):
         """Real-time batch translation for multiple languages"""
         source_lang_short = self._normalize_lang_code(source_lang)
@@ -372,7 +363,7 @@ class TranslationPipeline:
         if not text or not str(text).strip():
             return {lang: "[No text provided]" for lang in target_langs}
 
-        print(f"🎯 Real-time translate: {source_lang_short} → {len(target_langs)} languages")
+        print(f" Real-time translate: {source_lang_short} → {len(target_langs)} languages")
         
         results = {}
         successful = 0
@@ -391,7 +382,7 @@ class TranslationPipeline:
             except Exception as e:
                 results[target_lang] = f"[Error: {str(e)}]"
 
-        print(f"📊 Real-time: {successful}/{len(target_langs)} successful")
+        print(f" Real-time: {successful}/{len(target_langs)} successful")
         return results
 
     def _normalize_lang_code(self, lang_code):
@@ -410,7 +401,7 @@ class TranslationPipeline:
 # Test function
 def test_translation_pipeline():
     """Test the translation pipeline"""
-    print("🧪 TESTING TRANSLATION PIPELINE")
+    print(" TESTING TRANSLATION PIPELINE")
     print("=" * 35)
     
     try:
@@ -418,13 +409,13 @@ def test_translation_pipeline():
         
         # Quick test
         test_text = "Hello, how are you today?"
-        print(f"\n📝 Test text: {test_text}")
+        print(f"\n Test text: {test_text}")
         
         translations, bleu_scores, latencies = pipeline.translate_text_to_all_languages_parallel(
             test_text, "en", max_workers=4
         )
         
-        print(f"\n📊 Results: {len(translations)} translations")
+        print(f"\n Results: {len(translations)} translations")
         for lang, text in list(translations.items())[:3]:  # Show first 3
             lang_name = pipeline.languages.get(lang, lang)
             print(f"   {lang_name}: {text}")
@@ -432,7 +423,7 @@ def test_translation_pipeline():
         return len(translations) > 0
         
     except Exception as e:
-        print(f"❌ Pipeline test failed: {e}")
+        print(f" Pipeline test failed: {e}")
         return False
 
 if __name__ == "__main__":

@@ -1,8 +1,5 @@
 # milestone4_server.py
-# ------------------------------------------
-# Flask + SocketIO backend for Milestone4
-# Improved: chunked STT (long-form), robust TTS & merge, progress events
-# ------------------------------------------
+
 
 import os
 os.environ["PATH"] += os.pathsep + r"D:\Projects\live-ai-speech-translator\ffmpeg\bin"
@@ -24,7 +21,7 @@ import requests
 from dotenv import load_dotenv
 load_dotenv()
 
-# Optional audio libs
+
 try:
     import azure.cognitiveservices.speech as speechsdk
 except Exception:
@@ -37,13 +34,13 @@ except Exception:
 
 try:
     from pydub import AudioSegment
-    # Ensure pydub knows ffmpeg locations on windows if needed
+   
     AudioSegment.converter = r"D:\Projects\live-ai-speech-translator\ffmpeg\bin\ffmpeg.exe"
     AudioSegment.ffprobe = r"D:\Projects\live-ai-speech-translator\ffmpeg\bin\ffprobe.exe"
 except Exception:
     AudioSegment = None
 
-# CONFIG
+
 TRANSLATOR_KEY = os.getenv("TRANSLATOR_KEY")
 TRANSLATOR_REGION = os.getenv("TRANSLATOR_REGION", "centralindia")
 TRANSLATOR_ENDPOINT = os.getenv("TRANSLATOR_ENDPOINT", "https://api.cognitive.microsofttranslator.com/")
@@ -57,7 +54,7 @@ AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 FFMPEG_BIN = r"D:\Projects\live-ai-speech-translator\ffmpeg\bin\ffmpeg.exe"
 FFPROBE_BIN = r"D:\Projects\live-ai-speech-translator\ffmpeg\bin\ffprobe.exe"
 
-# Voice map: short code -> Azure voice name (adjust to available voices)
+
 VOICE_MAP = {
     "hi": "hi-IN-SwaraNeural",
     "en": "en-US-Neural2-A",
@@ -74,21 +71,19 @@ VOICE_MAP = {
     "ko": "ko-KR-SunHiNeural"
 }
 
-# Flask app
+
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET", "dev-secret")
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
-# Ensure folders
+
 os.makedirs("static/uploads/videos/original", exist_ok=True)
 os.makedirs("static/uploads/videos/translated", exist_ok=True)
 os.makedirs("results/audio_output", exist_ok=True)
 os.makedirs("results/temp_audio", exist_ok=True)
 os.makedirs("results/translations", exist_ok=True)
 
-# ---------------------------
 # Utilities
-# ---------------------------
 def safe_run(cmd_list, timeout=None):
     try:
         proc = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, timeout=timeout)
@@ -106,7 +101,7 @@ def ffmpeg_extract_audio(video_path, out_wav):
     return out_wav if ok else None
 
 def ffmpeg_merge_audio_into_video(video_path, audio_path, out_video):
-    # Merge audio (re-encode audio to aac if needed) and copy video stream
+    
     cmd = [
         FFMPEG_BIN, "-y",
         "-i", video_path,
@@ -154,7 +149,7 @@ def save_temp_audio(b64_audio):
         if not b64_audio:
             print("save_temp_audio: empty payload")
             return None
-        # defensive: sometimes frontend sends object
+        
         if isinstance(b64_audio, dict):
             b64_audio = b64_audio.get("audio_b64") or b64_audio.get("data") or ""
         wav = save_audio_from_base64(b64_audio, out_dir="results/temp_audio")
@@ -165,9 +160,7 @@ def save_temp_audio(b64_audio):
         print("save_temp_audio error:", e)
         return None
 
-# ---------------------------
 # Azure Services
-# ---------------------------
 def azure_stt_from_wav_once(wav_path, language="en-US"):
     # short utterance STT (keeps mic flow working)
     if speechsdk is None:
@@ -192,7 +185,7 @@ def azure_stt_from_wav_once(wav_path, language="en-US"):
         print("azure_stt_from_wav_once error:", e)
         return "", language
 
-# --- NEW: chunking helpers for long audio transcription ---
+
 def split_audio_into_chunks(wav_path, chunk_length_ms=15000, out_dir=None):
     """
     Split WAV into chunks (pydub). chunk_length_ms default 15s.
@@ -309,10 +302,10 @@ def azure_tts_save_wav(text, language_code="hi", voice_name=None):
     out_dir = "results/audio_output"
     os.makedirs(out_dir, exist_ok=True)
 
-    # Try a list of formats (format constant, extension)
+    
     formats_to_try = []
     if speechsdk:
-        # prefer WAV PCM (widely supported) then MP3
+        
         try:
             formats_to_try.append((speechsdk.SpeechSynthesisOutputFormat.Riff16Khz16BitMonoPcm, "wav"))
         except Exception:
@@ -322,12 +315,12 @@ def azure_tts_save_wav(text, language_code="hi", voice_name=None):
         except Exception:
             pass
 
-    # If nothing from sdk (or not available), fallback to mp3 extension for pyttsx3
+    
     if not formats_to_try:
         formats_to_try.append((None, "wav"))
 
     last_err = None
-    # If Azure SDK available and keys set, try Azure synthesis
+    
     if speechsdk and SPEECH_KEY and SPEECH_REGION:
         for fmt_const, ext in formats_to_try:
             filename = f"tts_{uuid.uuid4().hex}.{ext}"
@@ -345,7 +338,7 @@ def azure_tts_save_wav(text, language_code="hi", voice_name=None):
                     try:
                         cfg.set_speech_synthesis_output_format(fmt_const)
                     except Exception as e:
-                        # continue to next format if setting format fails
+                        
                         print("Could not set format on cfg:", e)
 
                 audio_cfg = speechsdk.audio.AudioOutputConfig(filename=out_path)
@@ -358,11 +351,11 @@ def azure_tts_save_wav(text, language_code="hi", voice_name=None):
                     err = getattr(result, "error_details", None) or "unknown tts reason"
                     last_err = f"TTS failed (format {ext}): {err}"
                     print(last_err)
-                    # try next format
+                    
             except Exception as e:
                 last_err = f"TTS exception (format {ext}): {e}"
                 print(last_err)
-                # try next format
+                
 
     # Fallback pyttsx3 if Azure failed or unavailable
     if pyttsx3:
@@ -379,9 +372,8 @@ def azure_tts_save_wav(text, language_code="hi", voice_name=None):
 
     return None, last_err or "No TTS method succeeded"
 
-# ---------------------------
 # Helpers (semantic)
-# ---------------------------
+
 def semantic_cleanup(text):
     try:
         if not text or not isinstance(text, str):
@@ -395,9 +387,8 @@ def semantic_cleanup(text):
         print("semantic_cleanup error:", e)
         return text or ""
 
-# ---------------------------
 # Flask Routes
-# ---------------------------
+
 @app.route("/videos")
 def list_videos():
     original_dir = "static/uploads/videos/original"
@@ -489,9 +480,8 @@ def translate_video():
     threading.Thread(target=background_translate_video_task, args=(video_name, target_lang, sid), daemon=True).start()
     return jsonify({"status": "accepted"})
 
-# ---------------------------
 # Background Task (main flow)
-# ---------------------------
+
 def background_translate_video_task(video_filename, target_lang, sid=None):
     try:
         if sid:
@@ -512,7 +502,7 @@ def background_translate_video_task(video_filename, target_lang, sid=None):
 
         # STT - LONG FORM
         if sid: socketio.emit("translate-progress", {"status":"stt_start", "detail": "Starting speech recognition"}, room=sid)
-        # For now we use default SR language; you can improve by auto-detecting source language
+        
         sr_lang = "en-US"
         text = azure_stt_long_form(wav, language=sr_lang, chunk_ms=20000, sid=sid)
         if not text or len(text.strip()) < 3:
@@ -552,7 +542,7 @@ def background_translate_video_task(video_filename, target_lang, sid=None):
 def delete_video_api():
     data = request.get_json()
     filename = data.get("filename")
-    video_type = data.get("type")  # "original" or "translated"
+    video_type = data.get("type")  
 
     if not filename or not video_type:
         return jsonify({"success": False, "message": "Missing filename/type"}), 400
@@ -568,7 +558,7 @@ def delete_video_api():
 
     return jsonify({"success": False, "message": "File not found"}), 404
 
-# Serve static videos (explicit)
+
 @app.route('/static/uploads/videos/original/<path:filename>')
 def serve_original_video(filename):
     return send_from_directory('static/uploads/videos/original', filename, as_attachment=False)
@@ -581,7 +571,7 @@ def serve_translated_video(filename):
 def index():
     return render_template("index.html")
 
-# Run
+
 if __name__ == "__main__":
-    print("🚀 Milestone4 Flask Server running on http://127.0.0.1:5001")
+    print(" Milestone4 Flask Server running on http://127.0.0.1:5001")
     socketio.run(app, host="127.0.0.1", port=5001, debug=True)
