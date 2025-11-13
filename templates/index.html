@@ -326,17 +326,17 @@
     document.querySelectorAll(".submenu").forEach(x=> x.style.display = "none");
   }
   document.addEventListener("click", (ev) => {
-    // close only if click outside menu-box and not on a .dots
+   
     let target = ev.target;
     if (target.closest && (target.closest(".menu-box") || target.classList.contains("dots") || target.closest(".submenu"))) {
-      return; // click inside menu or on dots — do nothing
+      return; 
     }
     closeAllMenus();
   });
 
   /* ---------- actions ---------- */
   function downloadVideo(url, fname){
-    // create <a> and click
+    
     const a = document.createElement("a");
     a.href = url;
     a.download = fname;
@@ -387,8 +387,7 @@
         body: JSON.stringify({ video_name: name, target_lang: lang, socket_sid: socket.id })
       });
       const data = await res.json().catch(()=>null);
-      // server responds with accepted — actual progress comes via socket
-      // we keep loader open until socket says done/error
+      
       if (!res.ok) {
         hideLoader();
         notify("Translate request failed", "error");
@@ -407,13 +406,13 @@
       if (!msg) return;
       if (msg.status === "done") {
         hideLoader();
-        notify("✅ Video translated");
+        notify(" Video translated");
         loadVideos();
       } else if (msg.status === "error") {
         hideLoader();
         notify(msg.message || "Translation error", "error");
       } else {
-        // intermediate update
+       
         document.getElementById("loaderSubtext").textContent = (msg.detail || msg.status || "");
       }
     } catch (e) { console.error(e); }
@@ -425,7 +424,7 @@
     const micSelect = document.getElementById("micLangSelect");
     if (!micBtn || !micSelect) return;
     micBtn.addEventListener("click", async () => {
-      // request mic, record ~4 seconds (non-blocking)
+      
       const target = micSelect.value || "hi";
       notify("🎤 Recording 4s...");
       try {
@@ -457,8 +456,8 @@
         notify(msg.error || "Mic translation failed", "error");
         return;
       }
-      notify("🎉 Mic translated");
-      // play TTS if present
+      notify(" Mic translated");
+      
       if (msg.audio_url) {
         const audio = new Audio(API + msg.audio_url);
         audio.play();
@@ -472,13 +471,13 @@
   socket.on("connect_error", () => notify("Socket connect failed", "error"));
   socket.on("connect", () => console.log("socket connected"));
 
-  /* ---------- init ---------- */
+
   document.addEventListener("DOMContentLoaded", async () => {
     await loadVideos();
     attachMicHandler();
   });
 
-  // expose for debugging (optional)
+ 
   window.__app = { loadVideos };
 
 })();
